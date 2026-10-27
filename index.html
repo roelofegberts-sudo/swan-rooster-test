@@ -1,0 +1,724 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Swan Rooster 2.0 · v0.9.30</title><style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#193a38;background:#f3f6f5}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1060px;margin:auto;padding:16px 12px 60px}h1{font-size:25px;margin:4px 0}h2{font-size:19px;margin:0 0 12px}h3{font-size:15px;margin:0 0 8px}.muted{color:#607572;font-size:13px}.card{background:#fff;border:1px solid #dbe6e2;border-radius:15px;padding:16px;margin:12px 0}.notice{background:#fff4dd;border:1px solid #e8ce93;padding:12px;border-radius:12px;font-size:13px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}label{display:block;font-size:13px;font-weight:650;margin:0 0 5px}input,select,button{font:inherit}input,select{width:100%;padding:10px;border:1px solid #b9cdc6;border-radius:9px;background:white;color:#193a38}button{background:#145c43;color:white;border:0;border-radius:9px;padding:10px 12px;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.soft{background:#145c43;color:#fff}.danger{background:#145c43;color:#fff}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.tabs button{flex:1;min-width:85px}.tabs .active{background:#187367}.manage-tabs{margin-top:8px;padding:10px;background:#e7efec;border-radius:12px}.manage-tabs button{flex:1 1 160px}.manage-section{display:none}.manage-section.active{display:block}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border:1px solid #dbe6e2;background:white;border-radius:12px;padding:12px;text-align:center}.stat strong{display:block;font-size:22px}.stat small{color:#607572;font-size:11px}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.calday{padding:7px 2px;min-height:52px;background:white;border:1px solid #dce7e3;color:#193a38;display:flex;flex-direction:column;gap:3px;align-items:center}.calday small{font-size:10px}.calday.filled{background:#eff6ff;border-color:#93c5fd}.calday.available{background:#f0fdf4;border-color:#86efac}.dot{width:8px;height:8px;border-radius:100%;background:#16a34a}.dot.full{background:#4c1d95}.item{border-top:1px solid #e5ece9;padding:11px 0}.item:first-child{border:0}.pill{border-radius:20px;padding:4px 8px;font-size:11px;background:#e6f4ed;color:#146e50;white-space:nowrap}.pill.open{background:#dcfce7;color:#166534}.pill.gray{background:#dbeafe;color:#1d4ed8}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}.buttons{display:flex;flex-wrap:wrap;gap:8px}.hidden{display:none!important}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid #e4ece8;padding:9px 5px;text-align:left;vertical-align:top}.scroll{overflow:auto}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #d5a13c}@media(max-width:600px){.fields,.twocol{grid-template-columns:1fr}.card{padding:13px}.wrap{padding:12px 10px 60px}h1{font-size:22px}.stat{padding:9px 3px}.stat strong{font-size:19px}.calday{min-height:47px}}
+ .login-shell{min-height:100vh;display:grid;place-items:center;padding:16px}.login-panel{width:min(100%,440px);background:#fff;border:1px solid #dbe6e2;border-radius:18px;padding:24px;box-shadow:0 12px 38px #193a3815}.login-panel h1{margin:6px 0 12px}.login-panel select{margin-bottom:16px}.login-panel button{width:100%;margin-top:8px}.login-panel .muted{line-height:1.55}.login-error{color:#a02727;font-size:13px}.logout{margin-left:8px} .proposal-pill{background:#facc15;color:#422006}.proposal-dot{background:#eab308!important}.proposal-day{border:2px solid #eab308!important;background:#fef9c3!important}.closed-day{background:#fee2e2!important;border:2px solid #dc2626!important;color:#991b1b!important}.closed-day span{color:#dc2626} .calday.closed-day{background:#fee2e2!important;border:2px solid #dc2626!important;color:#991b1b!important}.calday.closed-day small{color:#991b1b!important;font-weight:700}.calday.filled{background:#ede9fe;border:2px solid #8b5cf6}.calday.available{background:#dcfce7;border:2px solid #4ade80}.calday .duty-type{font-size:9px;line-height:1.15;display:block;color:#4c1d95;font-weight:650;overflow-wrap:anywhere}.calday.proposal-day .duty-type{color:#854d0e}.calday.closed-day .duty-type{color:#991b1b}.calday.my-duty{background:#cffafe!important;border:2px solid #0891b2!important;color:#164e63!important}.calday.my-duty .duty-type{color:#155e75!important}.calday.my-duty small{color:#155e75!important}@media(max-width:600px){.calday .duty-type{font-size:8px}} 
+/* Actieve actieknoppen: uniforme donkergroene uitstraling. Kalendercellen behouden statuskleuren. */
+button:not(.calday):not(:disabled){background:#145c43!important;color:#fff!important;border-color:#145c43!important}
+button:not(.calday):not(:disabled):hover{background:#0d4833!important}
+button:not(.calday):disabled{background:#b8c7c0!important;color:#53665e!important;opacity:.8}
+button:not(.calday):focus-visible{outline:3px solid #f3bf59;outline-offset:2px}
+</style></head><body>
+<section id="loginScreen" class="login-shell"><div class="login-panel">
+<div class="muted">SWAN MARKET STORES · DEMO</div><h1>Welkom bij Swan Rooster</h1>
+<p class="muted">Meld je aan om de drie roostermaanden te bekijken. Dit is alleen een demonstratie; er vindt nog geen echte identiteitscontrole plaats.</p>
+<label for="loginRole">Ik log in als</label><select id="loginRole"><option value="participant">Deelnemer</option><option value="coordinator">Centrale coördinator</option></select>
+<div id="loginCompanyRow"><label for="loginCompany">Mijn bedrijf</label><select id="loginCompany"></select></div>
+<label for="loginName">Naam (optioneel)</label><input id="loginName" autocomplete="name" maxlength="80" placeholder="Bijvoorbeeld Roelof">
+<button id="loginSubmit" type="button">Naar het rooster</button>
+<p class="muted">Wachtwoord en tweestapsverificatie worden later toegevoegd. Gebruik nu geen echte wachtwoorden.</p>
+</div></section>
+<div class="wrap hidden" id="appShell"><div class="row"><div><div class="muted">SWAN MARKET STORES · PROEFVERSIE 0.9.36</div><h1>Rooster december 2026</h1></div><div class="row"><span class="pill" id="status">Open (demo)</span><button class="soft logout" id="logout" type="button">Uitloggen</button></div></div><div class="notice">Oefenomgeving met 100 fictieve bedrijven. Simulatiedatum: 20 november 2026. Het oefenrooster is opnieuw ingedeeld met circa 90% bezetting, rekening houdend met gesloten dagen. Gesloten dagen blijven rood. Niet gekoppeld aan Swan. Gegevens worden alleen op dit apparaat bewaard. Feestdagen en afkortingen van nieuwe filialen moeten nog bevestigd worden.</div><div class="card fields" id="rosterViewFilters"><div><label for="company">Roosterweergave</label><select id="company"></select></div><div><label for="branch">Filiaal</label><select id="branch"></select></div><div class="hidden"><label for="role">Rol (alleen demo)</label><select id="role"><option value="participant">Deelnemer</option><option value="coordinator">Centrale coördinator</option></select></div></div><div class="stats" id="rosterStats"><div class="stat"><strong id="regCount">0/2</strong><small>Reguliere diensten</small></div><div class="stat"><strong id="backCount">0/2</strong><small>Back-ups</small></div><div class="stat"><strong id="hours">0</strong><small>Uren eigen bedrijf</small></div></div><div class="tabs" id="tabs"><button data-tab="month">Maand</button><button data-tab="week" class="active">Week</button><button data-tab="day">Dag</button><button data-tab="signup">Inschrijven</button><button data-tab="mine">Mijn diensten</button><button data-tab="manage" id="manageButton" class="hidden">Beheer</button></div><div class="tabs manage-tabs hidden" id="manageTabs" aria-label="Onderdelen beheer"></div><div id="actionFeedback" role="status" aria-live="polite" class="hidden"></div><main id="content"></main><p class="muted">In productie zijn echte accounts, een centrale database en bescherming tegen gelijktijdige inschrijvingen noodzakelijk. De coördinatorrol is hier uitsluitend een oefenschakelaar.</p></div><script>
+'use strict';
+let feedbackSerial=0;
+function feedback(message,ok=true){
+ feedbackSerial++;
+ const el=document.getElementById('actionFeedback');
+ if(!el)return;
+ el.className='card';
+ el.style.cssText='border-left:5px solid '+(ok?'#16805d':'#c24132')+';background:'+(ok?'#ecfdf5':'#fef2f2')+';color:#193a38;margin:10px 0';
+ el.textContent=(ok?'✓ ':'⚠ ')+message;
+}
+function failure(message){feedback(message,false);window.alert(message);return false}
+const originalAlert=window.alert.bind(window);
+window.alert=function(message){feedback(String(message),false);return originalAlert(message)};
+const originalConfirm=window.confirm.bind(window);
+window.confirm=function(message){const accepted=originalConfirm(message);if(!accepted)feedback('Actie geannuleerd: '+String(message),false);return accepted};
+const originalPrompt=window.prompt.bind(window);
+window.prompt=function(message,value){const answer=originalPrompt(message,value);if(answer===null)feedback('Invoer geannuleerd: '+String(message),false);return answer};
+
+// Algemene terugmeldingsgarantie: iedere actieve knop levert een zichtbaar resultaat.
+// Specifieke handlers mogen hun eigen, informatievere melding tonen.
+document.addEventListener('click',event=>{
+ const btn=event.target.closest('button');
+ if(!btn||btn.disabled)return;
+ const before=feedbackSerial;
+ const name=(btn.getAttribute('aria-label')||btn.textContent||btn.title||'Actie').trim().replace(/\s+/g,' ').slice(0,90);
+ queueMicrotask(()=>{
+  if(feedbackSerial!==before)return;
+  const stillThere=document.contains(btn);
+  if(stillThere&&btn.matches('[data-tab], [data-manage-nav]'))feedback('Onderdeel '+name+' geopend.');
+  else if(btn.matches('.calday,[data-day]'))feedback('Kalenderdag geselecteerd.');
+  else feedback('Knop '+name+' verwerkt. Controleer het resultaat in het scherm.');
+ });
+},true);
+const $=id=>document.getElementById(id), esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let branches=[['Breda','SMS 076'],['Delft','SMS 015'],['Den Bosch','code onbekend'],['Den Haag','SMS 070'],['Haarlem','SMS 023'],['Leiden','SMS 071'],['Nijmegen','code onbekend'],['Rotterdam OBW','SMS 010 OBW'],['Rotterdam WDW','SMS 010 WDW'],['Utrecht','SMS 030']];
+let companies=[{"id":"746","name":"kleurrijkspul","branches":["Leiden","Den Haag"]},{"id":"901","name":"Atelier Linde (fictief)","branches":["Haarlem","Nijmegen","Rotterdam OBW"]},{"id":"902","name":"Studio Nova (fictief)","branches":["Breda","Haarlem"]},{"id":"903","name":"Papier & Pracht (fictief)","branches":["Delft","Rotterdam WDW"]},{"id":"904","name":"KadoKunst (fictief)","branches":["Breda","Haarlem"]},{"id":"905","name":"De Kleine Maker (fictief)","branches":["Haarlem"]},{"id":"906","name":"Keramiek & Co (fictief)","branches":["Den Haag","Nijmegen","Rotterdam OBW"]},{"id":"907","name":"Studio Koraal (fictief)","branches":["Delft","Rotterdam WDW"]},{"id":"908","name":"Mooi van Mij (fictief)","branches":["Delft","Haarlem"]},{"id":"909","name":"Hout & Hart (fictief)","branches":["Delft","Nijmegen"]},{"id":"910","name":"Bloematelier Iris (fictief)","branches":["Breda","Den Haag","Haarlem","Rotterdam OBW"]},{"id":"911","name":"Noordlicht Design (fictief)","branches":["Delft"]},{"id":"912","name":"Kleine Wonderen (fictief)","branches":["Delft","Haarlem","Nijmegen","Rotterdam WDW","Utrecht"]},{"id":"913","name":"Atelier Maan (fictief)","branches":["Den Bosch","Den Haag","Haarlem"]},{"id":"914","name":"Kleur & Vorm (fictief)","branches":["Delft","Den Haag","Haarlem"]},{"id":"915","name":"Draadwerk (fictief)","branches":["Delft","Nijmegen","Rotterdam WDW"]},{"id":"916","name":"De Kaartenkamer (fictief)","branches":["Nijmegen","Utrecht"]},{"id":"917","name":"Studio Eik (fictief)","branches":["Breda","Rotterdam OBW"]},{"id":"918","name":"Wol & Weef (fictief)","branches":["Den Bosch","Den Haag","Utrecht"]},{"id":"919","name":"Glasatelier (fictief)","branches":["Den Bosch","Leiden","Rotterdam WDW"]},{"id":"920","name":"Prachtig Papier (fictief)","branches":["Breda","Rotterdam OBW"]},{"id":"921","name":"Studio Zon (fictief)","branches":["Haarlem"]},{"id":"922","name":"Handgemaakt Hart (fictief)","branches":["Breda","Den Haag","Haarlem","Nijmegen"]},{"id":"923","name":"Atelier Vuur (fictief)","branches":["Breda","Den Haag","Nijmegen"]},{"id":"924","name":"Het Keramiekhuis (fictief)","branches":["Leiden","Nijmegen"]},{"id":"925","name":"Lief & Lokaal (fictief)","branches":["Delft","Den Bosch","Rotterdam OBW"]},{"id":"926","name":"Vilt & Vorm (fictief)","branches":["Breda","Den Bosch","Leiden"]},{"id":"927","name":"Zilvermaan (fictief)","branches":["Den Haag","Haarlem","Rotterdam WDW"]},{"id":"928","name":"Lokaal Geluk (fictief)","branches":["Den Bosch","Haarlem","Rotterdam OBW"]},{"id":"929","name":"Studio Veld (fictief)","branches":["Delft","Nijmegen","Utrecht"]},{"id":"930","name":"De Cadeauwinkel (fictief)","branches":["Delft","Haarlem","Leiden","Nijmegen","Utrecht"]},{"id":"931","name":"Atelier 031 (fictief)","branches":["Den Haag"]},{"id":"932","name":"Atelier 032 (fictief)","branches":["Delft","Haarlem"]},{"id":"933","name":"Atelier 033 (fictief)","branches":["Leiden"]},{"id":"934","name":"Atelier 034 (fictief)","branches":["Breda","Den Bosch"]},{"id":"935","name":"Atelier 035 (fictief)","branches":["Nijmegen","Rotterdam WDW"]},{"id":"936","name":"Atelier 036 (fictief)","branches":["Breda","Leiden","Utrecht"]},{"id":"937","name":"Atelier 037 (fictief)","branches":["Leiden"]},{"id":"938","name":"Atelier 038 (fictief)","branches":["Delft","Leiden","Nijmegen","Rotterdam OBW"]},{"id":"939","name":"Atelier 039 (fictief)","branches":["Den Bosch","Nijmegen","Rotterdam OBW"]},{"id":"940","name":"Atelier 040 (fictief)","branches":["Haarlem","Rotterdam OBW"]},{"id":"941","name":"Atelier 041 (fictief)","branches":["Delft","Den Bosch","Den Haag","Rotterdam WDW","Utrecht"]},{"id":"942","name":"Atelier 042 (fictief)","branches":["Den Haag","Leiden"]},{"id":"943","name":"Atelier 043 (fictief)","branches":["Delft","Utrecht"]},{"id":"944","name":"Atelier 044 (fictief)","branches":["Leiden","Nijmegen"]},{"id":"945","name":"Atelier 045 (fictief)","branches":["Haarlem","Rotterdam WDW"]},{"id":"946","name":"Atelier 046 (fictief)","branches":["Den Haag","Haarlem"]},{"id":"947","name":"Atelier 047 (fictief)","branches":["Den Bosch","Rotterdam WDW"]},{"id":"948","name":"Atelier 048 (fictief)","branches":["Breda","Delft","Den Haag","Leiden","Nijmegen","Utrecht"]},{"id":"949","name":"Atelier 049 (fictief)","branches":["Breda","Den Bosch","Haarlem","Rotterdam OBW","Rotterdam WDW"]},{"id":"950","name":"Atelier 050 (fictief)","branches":["Delft","Rotterdam OBW","Utrecht"]},{"id":"951","name":"Atelier 051 (fictief)","branches":["Breda","Den Haag","Utrecht"]},{"id":"952","name":"Atelier 052 (fictief)","branches":["Den Haag","Rotterdam OBW","Rotterdam WDW","Utrecht"]},{"id":"953","name":"Atelier 053 (fictief)","branches":["Breda","Haarlem","Nijmegen","Utrecht"]},{"id":"954","name":"Atelier 054 (fictief)","branches":["Delft","Den Bosch","Den Haag","Leiden"]},{"id":"955","name":"Atelier 055 (fictief)","branches":["Breda","Rotterdam WDW"]},{"id":"956","name":"Atelier 056 (fictief)","branches":["Den Haag","Leiden","Rotterdam OBW"]},{"id":"957","name":"Atelier 057 (fictief)","branches":["Den Haag","Utrecht"]},{"id":"958","name":"Atelier 058 (fictief)","branches":["Nijmegen","Rotterdam OBW"]},{"id":"959","name":"Atelier 059 (fictief)","branches":["Nijmegen"]},{"id":"960","name":"Atelier 060 (fictief)","branches":["Breda","Rotterdam WDW"]},{"id":"961","name":"Atelier 061 (fictief)","branches":["Den Bosch","Utrecht"]},{"id":"962","name":"Atelier 062 (fictief)","branches":["Rotterdam OBW"]},{"id":"963","name":"Atelier 063 (fictief)","branches":["Breda"]},{"id":"964","name":"Atelier 064 (fictief)","branches":["Breda","Leiden"]},{"id":"965","name":"Atelier 065 (fictief)","branches":["Leiden","Rotterdam OBW"]},{"id":"966","name":"Atelier 066 (fictief)","branches":["Den Haag","Haarlem","Rotterdam WDW"]},{"id":"967","name":"Atelier 067 (fictief)","branches":["Delft","Den Haag","Rotterdam OBW"]},{"id":"968","name":"Atelier 068 (fictief)","branches":["Rotterdam OBW"]},{"id":"969","name":"Atelier 069 (fictief)","branches":["Nijmegen","Rotterdam OBW"]},{"id":"970","name":"Atelier 070 (fictief)","branches":["Leiden","Nijmegen"]},{"id":"971","name":"Atelier 071 (fictief)","branches":["Rotterdam WDW"]},{"id":"972","name":"Atelier 072 (fictief)","branches":["Nijmegen","Rotterdam OBW","Rotterdam WDW"]},{"id":"973","name":"Atelier 073 (fictief)","branches":["Delft"]},{"id":"974","name":"Atelier 074 (fictief)","branches":["Breda","Den Bosch"]},{"id":"975","name":"Atelier 075 (fictief)","branches":["Delft","Nijmegen","Utrecht"]},{"id":"976","name":"Atelier 076 (fictief)","branches":["Den Bosch","Haarlem"]},{"id":"977","name":"Atelier 077 (fictief)","branches":["Breda","Den Bosch","Rotterdam WDW","Utrecht"]},{"id":"978","name":"Atelier 078 (fictief)","branches":["Delft","Nijmegen","Rotterdam WDW"]},{"id":"979","name":"Atelier 079 (fictief)","branches":["Haarlem","Rotterdam WDW"]},{"id":"980","name":"Atelier 080 (fictief)","branches":["Breda","Haarlem","Rotterdam OBW","Utrecht"]},{"id":"981","name":"Atelier 081 (fictief)","branches":["Nijmegen"]},{"id":"982","name":"Atelier 082 (fictief)","branches":["Den Haag","Leiden"]},{"id":"983","name":"Atelier 083 (fictief)","branches":["Leiden"]},{"id":"984","name":"Atelier 084 (fictief)","branches":["Utrecht"]},{"id":"985","name":"Atelier 085 (fictief)","branches":["Den Bosch","Leiden","Utrecht"]},{"id":"986","name":"Atelier 086 (fictief)","branches":["Delft","Den Bosch","Rotterdam WDW"]},{"id":"987","name":"Atelier 087 (fictief)","branches":["Nijmegen","Utrecht"]},{"id":"988","name":"Atelier 088 (fictief)","branches":["Den Bosch","Haarlem"]},{"id":"989","name":"Atelier 089 (fictief)","branches":["Nijmegen","Utrecht"]},{"id":"990","name":"Atelier 090 (fictief)","branches":["Den Bosch"]},{"id":"991","name":"Atelier 091 (fictief)","branches":["Delft","Rotterdam OBW"]},{"id":"992","name":"Atelier 092 (fictief)","branches":["Breda","Den Haag","Rotterdam WDW"]},{"id":"993","name":"Atelier 093 (fictief)","branches":["Breda","Leiden"]},{"id":"994","name":"Atelier 094 (fictief)","branches":["Den Bosch","Den Haag","Haarlem"]},{"id":"995","name":"Atelier 095 (fictief)","branches":["Breda","Den Bosch","Leiden","Utrecht"]},{"id":"996","name":"Atelier 096 (fictief)","branches":["Delft","Leiden","Nijmegen","Rotterdam OBW","Rotterdam WDW"]},{"id":"997","name":"Atelier 097 (fictief)","branches":["Den Haag","Utrecht"]},{"id":"998","name":"Atelier 098 (fictief)","branches":["Delft","Den Haag","Rotterdam WDW"]},{"id":"999","name":"Atelier 099 (fictief)","branches":["Den Bosch","Haarlem","Rotterdam WDW"]},{"id":"1000","name":"Atelier 100 (fictief)","branches":["Rotterdam WDW","Utrecht"]}];
+// Fictieve e-mailadressen op gereserveerd .example-domein: nooit echte ontvangers.
+function demoEmail(c){return 'bedrijf'+String(c.id).replace(/[^a-zA-Z0-9]/g,'').toLowerCase()+'@swan-rooster.example';}
+const companiesKey='swan_v085_companies';
+try{
+ const saved=JSON.parse(localStorage.getItem(companiesKey)||'null');
+ const version=localStorage.getItem('swan_demo_population_version');
+ if(version==='094'&&Array.isArray(saved)&&saved.length)companies=saved;
+ else if(Array.isArray(saved)&&saved.length){
+  const extras=saved.filter(c=>!companies.some(x=>x.id===c.id));
+  companies=companies.concat(extras);
+  localStorage.setItem(companiesKey,JSON.stringify(companies));
+  localStorage.setItem('swan_demo_population_version','094');
+ }else{
+  localStorage.setItem(companiesKey,JSON.stringify(companies));
+  localStorage.setItem('swan_demo_population_version','094');
+ }
+}catch(e){}
+companies.forEach(c=>{if(!c.email)c.email=demoEmail(c)});
+function saveCompanies(){if(typeof monthDatasets!=='undefined')storeMonth();try{localStorage.setItem(companiesKey,JSON.stringify(companies))}catch(e){alert('Opslaan niet mogelijk op dit apparaat.')}}
+const shiftKey='swan_v085_shift_templates';let shiftOverrides={};
+try{shiftOverrides=JSON.parse(localStorage.getItem(shiftKey)||'{}')||{}}catch(e){}
+function saveShifts(){if(typeof monthDatasets!=='undefined')storeMonth();try{localStorage.setItem(shiftKey,JSON.stringify(shiftOverrides))}catch(e){alert('Diensttijden konden niet worden bewaard.')}}
+
+const branchHoursKey='swan_v0923_branch_hours';
+let branchHours={};try{branchHours=JSON.parse(localStorage.getItem(branchHoursKey)||'{}')||{}}catch(e){}
+function saveBranchHours(){if(typeof monthDatasets!=='undefined')storeMonth();try{localStorage.setItem(branchHoursKey,JSON.stringify(branchHours))}catch(e){/* lokaal opslaan niet beschikbaar in deze preview */}}
+const demoToday=new Date(2026,10,20,12); // Simulatiedatum 20 november 2026.
+const schedule=[['Openstellen',9],['Herinnering',15],['Start planning / deelnemersslot',18],['Definitief maken',20],['Laatste gaten',23]];
+const planningDatesKey='swan_v0935_planning_dates';
+let planningDates={};try{planningDates=JSON.parse(localStorage.getItem(planningDatesKey)||'{}')||{}}catch(e){}
+function defaultPlanningDates(monthKey){
+ const [year,month]=monthKey.split('-').map(Number);
+ const prev=new Date(year,month-2,1);
+ return schedule.map(([label,day])=>[label,`${prev.getFullYear()}-${String(prev.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`]);
+}
+function planningSchedule(){
+ const dates=planningDates[activeMonth]||defaultPlanningDates(activeMonth).map(x=>x[1]);
+ return schedule.map(([label],i)=>[label,new Date(dates[i]+'T12:00:00').toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'})]);
+}
+function planningEditor(){
+ const dates=planningDates[activeMonth]||defaultPlanningDates(activeMonth).map(x=>x[1]);
+ return `<form id="planningDatesForm"><p class="muted">Pas de vijf planningsdatums voor ${monthName(activeMonth)} aan. De wijzigingen worden alleen voor deze maand bewaard.</p>${schedule.map(([label],i)=>`<div class="item twocol"><label for="planningDate${i}">${esc(label)}</label><input id="planningDate${i}" type="date" required value="${dates[i]}"></div>`).join('')}<p><button type="submit">Planningsdatums opslaan</button></p></form>`;
+}
+
+function monthlyWeeks(){const last=new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate();const result=[];for(let d=1;d<=last;d+=7)result.push(Array.from({length:Math.min(7,last-d+1)},(_,i)=>d+i));return result}
+function monthDays(){return new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate()}
+
+let activeMonth='2026-12';
+const weekdays=['zo','ma','di','wo','do','vr','za'],weeks=[[1,2,3,4,5,6],[7,8,9,10,11,12,13],[14,15,16,17,18,19,20],[21,22,23,24,25,26,27],[28,29,30,31]];
+const weekday=d=>new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5))-1,d).getDay(),dayLabel=d=>`${weekdays[weekday(d)]} ${d} ${monthName(activeMonth).split(' ')[0]}`,special=d=>activeMonth==='2026-12'&&[24,25,26,31].includes(d);
+function baseSlots(d){let w=weekday(d);if(w===0)return [{id:1,time:'12:00–18:00',hours:6},{id:2,time:'12:00–18:00',hours:6}];if(w===1)return [{id:1,time:'13:00–18:00',hours:5},{id:2,time:'13:00–18:00',hours:5}];if(w===6)return [{id:1,time:'11:00–17:00',hours:6},{id:2,time:'11:00–17:00',hours:6}];return [{id:1,time:'10:00–18:00',hours:8},{id:2,time:'12:00–18:00',hours:6}]}
+const standardSlots=baseSlots;
+function slots(d,b){
+ let target=b||($('branch')?.value)||'Leiden';
+ if(shiftOverrides[target+'|'+d])return shiftOverrides[target+'|'+d];
+ if(activeMonth==='2027-01'){
+  const w=(weekday(d)+6)%7;
+  const raw=branchHours[target+'|weekday|'+w];
+  if(raw){const list=[];for(const type of ['day','afternoon','evening']){
+    const block=raw[type];if(!block?.active)continue;
+    const start=block.start,end=block.end;
+    const minutes=t=>Number(t.slice(0,2))*60+Number(t.slice(3,5));
+    if(!start||!end||minutes(end)<=minutes(start))continue;
+    list.push({id:list.length+1,time:start+'–'+end,hours:(minutes(end)-minutes(start))/60});
+   }return list;
+  }
+ }
+ return standardSlots(d)
+}
+const proposalKey='swan_v087_proposals';
+let proposals=[]; // Nieuwe blanco demonstratie; eerdere voorstellen niet importeren.
+function saveProposals(){if(typeof monthDatasets!=='undefined')storeMonth();try{localStorage.setItem(proposalKey,JSON.stringify(proposals))}catch(e){alert('Voorstel kon niet worden opgeslagen.')}}
+const key='swan_v0918_90percent_entries';
+const closureKey='swan_v099_closed_days';
+let holidaySelectedBranch='ALL',holidaySelectedDay=1;
+let closedDays={};try{closedDays=JSON.parse(localStorage.getItem(closureKey)||'{}')||{}}catch(e){}
+// Vaste sluitingsdagen van deze simulatie. Bestaande andere sluitingen blijven behouden.
+for(const b of branches.map(x=>x[0])){
+ closedDays[b+'|25']=true;
+ closedDays[b+'|26']=true;
+}
+closedDays['Leiden|5']=true;
+try{localStorage.setItem(closureKey,JSON.stringify(closedDays))}catch(e){}
+
+const isClosed=(b,d)=>Boolean(closedDays[b+'|'+d]);
+function saveClosedDays(){if(typeof monthDatasets!=='undefined')storeMonth();try{localStorage.setItem(closureKey,JSON.stringify(closedDays))}catch(e){alert('Gesloten dagen konden niet worden opgeslagen.')}}
+function setClosure(day,scope,closed){
+ const affected=scope==='ALL'?branches.map(b=>b[0]):[scope];
+ for(const b of affected){if(closed)closedDays[b+'|'+day]=true;else delete closedDays[b+'|'+day];}
+ saveClosedDays();
+}
+
+function shiftType(slot){const start=String(slot.time||'').split(/[–-]/)[0].trim();return start==='10:00'?'early':'short'}
+function regularNorm(entries){const regs=entries.filter(e=>e.kind==='regular');return regs.some(e=>shiftType(e)==='early')&&regs.some(e=>shiftType(e)==='short')}
+function sampleEntries(){
+ // Vroege + korte dienst waar mogelijk, unieke reguliere posities, geen gesloten dagen.
+ // Zaterdag/zondag/maandag hebben gelijke aanvangstijden en tellen als korte dienst.
+ const out=[];
+ for(let bi=0;bi<branches.length;bi++){
+  const b=branches[bi][0],eligible=companies.filter(c=>c.branches.includes(b));
+  const positions=[];
+  for(let d=1;d<=31;d++)if(!isClosed(b,d))for(const sl of slots(d,b))positions.push({day:d,slot:sl});
+  const early=positions.filter(p=>shiftType(p.slot)==='early');
+  const short=positions.filter(p=>shiftType(p.slot)==='short');
+  const target=Math.min(positions.length,Math.round(positions.length*.9));
+  const complete=Math.min(eligible.length,early.length,short.length,Math.floor(target/2));
+  let seq=0;
+  function add(c,p){out.push({id:'demo-r-'+bi+'-'+seq++,company:c.id,branch:b,day:p.day,slot:p.slot.id,kind:'regular',worker:['Sanne','Robin','Noor','Milan','Jules','Lotte','Sam','Eva'][seq%8],time:p.slot.time,hours:p.slot.hours});}
+  for(let i=0;i<complete;i++){
+   const c=eligible[i];const a=early.shift();
+   const ix=short.findIndex(p=>p.day!==a.day);const q=short.splice(ix>=0?ix:0,1)[0];
+   add(c,a);add(c,q);
+  }
+  const used=new Set(out.filter(e=>e.branch===b&&e.kind==='regular').map(e=>e.day+'|'+e.slot));
+  const remaining=positions.filter(p=>!used.has(p.day+'|'+p.slot.id));
+  let i=0;
+  while(out.filter(e=>e.branch===b&&e.kind==='regular').length<target&&remaining.length&&eligible.length){add(eligible[(complete+i)%eligible.length],remaining.shift());i++;}
+  // Twee back-ups per bedrijf met een complete vroege/korte combinatie.
+  for(let i=0;i<complete;i++)for(let k=0;k<2;k++){
+   const c=eligible[i],p=positions[(i*13+k*17+bi)%positions.length];
+   out.push({id:'demo-b-'+bi+'-'+i+'-'+k,company:c.id,branch:b,day:p.day,slot:p.slot.id,kind:'backup',worker:['Kim','Alex'][k],time:p.slot.time,hours:p.slot.hours});
+  }
+ }
+ return out;
+}
+
+function load(){
+ try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(Array.isArray(saved))return saved;}catch(e){}
+ const generated=sampleEntries();try{localStorage.setItem(key,JSON.stringify(generated))}catch(e){}
+ return generated;
+}
+let loggedInCompany='746';
+const locksKey='swan_v095_branch_locks';
+let branchLocks={};try{branchLocks=JSON.parse(localStorage.getItem(locksKey)||'{}')||{}}catch(e){}
+const isBranchLocked=b=>Boolean(branchLocks[b]);
+function saveBranchLocks(){if(typeof monthDatasets!=='undefined')storeMonth();try{localStorage.setItem(locksKey,JSON.stringify(branchLocks))}catch(e){alert('Vergrendeling kon niet worden opgeslagen.')}}
+function lockPhaseReached(){return demoToday>=new Date(2026,10,20)}
+function planningPhase(){
+ if(monthMode()==='afgesloten')return 'Afgesloten · historische demonstratiemaand';
+ if(monthMode()==='voorbereiding')return 'Voorbereiding · blanco maand, sluitingsdagen en inrichting instellen';
+ const now=demoToday,today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+ if(today<'2026-11-09')return 'Voorbereiding · inschrijvingen nog niet officieel geopend';
+ if(today<'2026-11-15')return 'Inschrijffase · openstelling';
+ if(today<'2026-11-18')return 'Inschrijffase · herinneringen';
+ if(today<'2026-11-20')return 'Planning · deelnemerssloten verdelen';
+ if(today<'2026-11-23')return 'Definitief maken · controle van inschrijvingen';
+ if(today<'2026-12-01')return 'Laatste gaten vullen · afronding';
+ if(today<='2026-12-31')return 'Uitvoering · decemberrooster';
+ return 'Afgesloten · roosterperiode verstreken';
+}
+const state={tab:'month',week:0,day:1,entries:load()};
+const company=()=>companies.find(c=>c.id===$('company').value),branch=()=>$('branch').value,coordinator=()=>$('role').value==='coordinator',current=()=>state.entries.filter(e=>e.branch===branch()),mine=()=>company()?current().filter(e=>e.company===company().id):[];
+const allSelected=()=>$('company').value==='ALL';
+const booking=(d,s)=>current().find(e=>e.kind==='regular'&&e.day===d&&e.slot===s);
+const backup=(d,s)=>current().filter(e=>e.kind==='backup'&&e.day===d&&e.slot===s);
+function respondProposal(id,accept){
+ const p=proposals.find(x=>x.id===id);if(!p||p.status!=='pending'||coordinator()||p.company!==loggedInCompany)return;
+ if(accept){
+  if(isClosed(p.branch,p.day))return alert('Dit filiaal is op deze dag gesloten.');
+  if(isBranchLocked(p.branch))return alert('Inschrijvingen voor dit filiaal zijn vergrendeld. Neem contact op met de coördinator.');
+  const sl=slots(p.day,p.branch).find(x=>x.id===p.slot);if(!sl)return alert('Deze dienst bestaat niet meer.');
+  if(p.kind==='regular'&&state.entries.some(e=>e.branch===p.branch&&e.day===p.day&&e.slot===p.slot&&e.kind==='regular'))return alert('De dienst is inmiddels bezet. Vraag de coördinator om een nieuw voorstel.');
+  const worker=prompt('Naam van de medewerker:');if(!worker||!worker.trim())return;
+  state.entries.push({id:'accepted-'+Date.now()+'-'+Math.random(),company:p.company,branch:p.branch,day:p.day,slot:p.slot,kind:p.kind,worker:worker.trim(),time:sl.time,hours:sl.hours});
+ }
+ p.status=accept?'accepted':'declined';saveProposals();persist();feedback('Dienstvoorstel '+(accept?'geaccepteerd':'afgewezen')+' voor '+p.branch+' op '+dayLabel(p.day)+'.');
+}
+function persist(){storeMonth();render()}
+function options(arr,selected){return arr.map(x=>`<option value="${esc(x[0])}" ${String(x[0])===String(selected)?'selected':''}>${esc(x[1])}</option>`).join('')}
+function refreshCompanySelector(preferred){
+ const el=$('company');if(!el)return;
+ const selected=preferred??el.value;
+ el.innerHTML=options([['ALL','Alle deelnemers'],...companies.map(c=>[c.id,c.name])],selected);
+ if(!companies.some(c=>c.id===selected)&&selected!=='ALL')el.value='ALL';
+}
+function setBranchOptions(){let list=coordinator()?(allSelected()?branches.map(b=>b[0]):company().branches):allSelected()?(companies.find(c=>c.id===loggedInCompany)||companies[0]).branches:company().branches;let old=branch();$('branch').innerHTML=options(list.map(x=>[x,`${x} · ${branches.find(b=>b[0]===x)[1]}`]),list.includes(old)?old:list[0])}
+function personalView(){return !coordinator()&&!allSelected()}
+function slotLine(d,s){let b=booking(d,s.id),backs=backup(d,s.id),pending=proposals.filter(p=>p.branch===branch()&&p.day===d&&p.slot===s.id&&p.status==='pending');return `<div class="item row"><div><b>Dienst ${s.id}</b> · ${esc(s.time)}<div>${b?`${esc(b.company)} – ${esc(companies.find(c=>c.id===b.company)?.name||'Onbekend')} · ${esc(b.worker)}`:'<span class="muted">Nog beschikbaar</span>'}</div>${pending.length?`<div><span class="pill proposal-pill">🟡 ${pending.length} voorstel(len) wachten op akkoord</span></div>`:''}${backs.length?`<div class="muted">Back-up: ${backs.map(x=>`${esc(x.company)} · ${esc(x.worker)}`).join('; ')}</div>`:''}</div><span class="pill ${b?'gray':'open'}">${b?'Bezet · paars':'Vrij · groen'}</span></div>`}
+function dayCard(d){if(isClosed(branch(),d))return `<div class="card"><h3>${esc(dayLabel(d))} · Gesloten</h3><p style="color:#b91c1c">🔴 Gesloten voor dit filiaal; geen diensten mogelijk.</p></div>`;if(personalView()){let entries=mine().filter(e=>e.day===d).sort((a,b)=>a.slot-b.slot);return `<div class="card"><div class="row"><h3>${esc(dayLabel(d))} ${special(d)?'⚠':''}</h3><button class="soft" data-day="${d}">Details</button></div>${entries.length?entries.map(e=>`<div class="item row"><div><b>Dienst ${e.slot}</b> · ${esc(e.time)}<div>${esc(e.worker)} · ${e.kind==='backup'?'Back-up':'Reguliere dienst'}</div></div><span class="pill gray">${e.kind==='backup'?'Back-up':'Mijn dienst'}</span></div>`).join(''):'<p class="muted">Geen eigen diensten op deze datum.</p>'}</div>`}return `<div class="card"><div class="row"><h3>${esc(dayLabel(d))} ${special(d)?'⚠':''}</h3><button class="soft" data-day="${d}">Details</button></div>${special(d)?'<div class="muted">Openingstijden nog te bevestigen</div>':''}${slots(d).map(s=>slotLine(d,s)).join('')}</div>`}
+let managedCompanyId='746';
+let manageSection='compliance';
+let coordinatorSelectedDay=null;
+// Markeringen voor openstaande diensten waarvoor een herinneringsmail is gegenereerd.
+const reminderStatusKey='swan_v0925_reminder_status';
+let reminderStatus={};try{reminderStatus=JSON.parse(localStorage.getItem(reminderStatusKey)||'{}')||{}}catch(e){}
+function saveReminderStatus(){if(typeof monthDatasets!=='undefined')storeMonth();try{localStorage.setItem(reminderStatusKey,JSON.stringify(reminderStatus))}catch(e){}}
+const reminderDatesKey='swan_v0924_reminder_dates';
+let reminderDates={};try{reminderDates=JSON.parse(localStorage.getItem(reminderDatesKey)||'{}')||{}}catch(e){}
+function markReminderDates(b){
+ const dates=[];
+ for(let d=1;d<=new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate();d++){
+  if(!isClosed(b,d)&&slots(d).some(slot=>!booking(d,slot.id)))dates.push(d);
+ }
+ reminderDates[b]=dates;
+ try{localStorage.setItem(reminderDatesKey,JSON.stringify(reminderDates))}catch(e){}
+ return dates;
+}
+
+// Maandisolatie v0.9.30: elke maand bewaart eigen momentopname en rooster.
+const monthStoreKey='swan_v0927_month_datasets';
+const monthLabels=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+function monthName(k){const [y,m]=k.split('-').map(Number);return monthLabels[m-1]+' '+y}
+const activeMonthOptions=['2026-11','2026-12','2027-01'];
+
+let monthDatasets={};try{monthDatasets=JSON.parse(localStorage.getItem(monthStoreKey)||'{}')||{}}catch(e){}
+const clone=v=>JSON.parse(JSON.stringify(v));
+function captureMonth(){return {companies:clone(companies),branches:clone(branches),entries:clone(state.entries),closedDays:clone(closedDays),shiftOverrides:clone(shiftOverrides),branchHours:clone(branchHours),reminderDates:clone(reminderDates),reminderStatus:clone(reminderStatus),branchLocks:clone(branchLocks),proposals:clone(proposals)}}
+function storeMonth(){monthDatasets[activeMonth]=captureMonth();try{localStorage.setItem(monthStoreKey,JSON.stringify(monthDatasets))}catch(e){alert('Maandgegevens konden niet worden opgeslagen.')}}
+if(!monthDatasets['2026-12']){monthDatasets['2026-12']=captureMonth()}
+if(!monthDatasets['2026-11']){const november=clone(monthDatasets['2026-12']);november.entries=[];november.closedDays={};november.proposals=[];november.reminderDates={};november.reminderStatus={};monthDatasets['2026-11']=november}
+if(!monthDatasets['2027-01']){const january=clone(monthDatasets['2026-12']);january.entries=[];january.closedDays={};january.proposals=[];january.reminderDates={};january.reminderStatus={};january.branchLocks={};monthDatasets['2027-01']=january}
+storeMonth();
+function switchMonth(target){
+ if(!coordinator()&&target!==participantPlanningMonth()){feedback('Deelnemers kunnen alleen de vrijgegeven planningsmaand bekijken.',false);return;}
+ if(!activeMonthOptions.includes(target)||target===activeMonth)return;
+ storeMonth();const d=monthDatasets[target];activeMonth=target;
+ companies=clone(d.companies);branches=clone(d.branches);state.entries=clone(d.entries);
+ closedDays=clone(d.closedDays);shiftOverrides=clone(d.shiftOverrides);branchHours=clone(d.branchHours);
+ reminderDates=clone(d.reminderDates);reminderStatus=clone(d.reminderStatus);branchLocks=clone(d.branchLocks);proposals=clone(d.proposals);
+ state.tab='month';state.day=1;coordinatorSelectedDay=null;
+ const chosen=$('company').value;
+ refreshCompanySelector(chosen);
+ if(!companies.some(c=>c.id===$('company').value))$('company').value=companies[0]?.id||'ALL';
+ setBranchOptions();render();feedback('Maand '+monthName(target)+' geopend. Status: '+monthMode()+'.');
+}
+// Deelnemers zien alleen de door de coördinator vrijgegeven maand.
+// Een maandwisseling wordt pas toegestaan na vergrendeling van de vorige maand.
+const releaseKey='swan_v0936_participant_release';
+let participantRelease={month:'2026-12'};
+try{const saved=JSON.parse(localStorage.getItem(releaseKey)||'null');if(saved&&activeMonthOptions.includes(saved.month))participantRelease=saved}catch(e){}
+function participantPlanningMonth(){return participantRelease.month}
+function monthMode(){return activeMonth==='2026-11'?'afgesloten':activeMonth==='2027-01'?'voorbereiding':'planning'}
+// November is alleen een historische kalenderdemonstratie zonder dienstrecords.
+const novemberDemoClosedDays=[1,15,29];
+function novemberDemoClosed(d){return activeMonth==='2026-11'&&novemberDemoClosedDays.includes(d)}
+function monthControls(){
+ let bar=$('monthSwitchBar');if(!bar){bar=document.createElement('div');bar.id='monthSwitchBar';bar.className='card';$('tabs').before(bar)}
+ bar.classList.toggle('hidden',!coordinator());
+ bar.innerHTML=`<h2 style="margin:0 0 8px">Kies roostermaand</h2><label for="monthSwitch">Maand en status</label><select id="monthSwitch">${options(activeMonthOptions.map(k=>[k,monthName(k)+' · '+(k==='2026-11'?'afgesloten':k==='2026-12'?'planning':'voorbereiding')]),activeMonth)}</select><p class="muted">${monthMode()==='afgesloten'?'Historische demonstratiemaand · alleen lezen':monthMode()==='voorbereiding'?'Blanco maand · inrichting en sluitingsdagen voorbereiden':'Actieve planningsmaand · decembergegevens behouden'}</p>`;
+ $('monthSwitch').onchange=()=>switchMonth($('monthSwitch').value);
+ $('appShell').querySelector('h1').textContent='Rooster '+monthName(activeMonth);
+}
+function render(){monthControls(); $('rosterViewFilters').classList.toggle('hidden',coordinator()&&state.tab==='manage');$('rosterStats').classList.toggle('hidden',coordinator()&&state.tab==='manage');if(!company()&&!allSelected())return;let regs=allSelected()?current().filter(e=>e.kind==='regular'):mine().filter(e=>e.kind==='regular'),backs=allSelected()?current().filter(e=>e.kind==='backup'):mine().filter(e=>e.kind==='backup');$('regCount').textContent=allSelected()?String(regs.length):`${regs.length}/2`;$('backCount').textContent=allSelected()?String(backs.length):`${backs.length}/2`;$('hours').textContent=regs.reduce((a,e)=>a+e.hours,0);$('status').textContent=isBranchLocked(branch())?'Gesloten (demo)':'Open (demo)';$('manageButton').classList.toggle('hidden',!coordinator()||monthMode()==='afgesloten');if(monthMode()==='afgesloten'&&state.tab==='manage')state.tab='month';document.querySelectorAll('[data-tab="week"],[data-tab="day"]').forEach(b=>b.classList.add('hidden'));if(state.tab==='manage'&&!coordinator())state.tab='month';if(['week','day'].includes(state.tab))state.tab='month';if(coordinator()&&state.tab==='all')state.tab='month';if((allSelected()||coordinator())&&['signup','mine'].includes(state.tab))state.tab='all';document.querySelectorAll('[data-tab="signup"],[data-tab="mine"]').forEach(b=>b.classList.toggle('hidden',coordinator()||allSelected()||monthMode()==='afgesloten'));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===state.tab));let h='';
+if(state.tab==='month'){
+ const calendarDays=Array.from({length:new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate()},(_,i)=>i+1).map(d=>{
+  if(isClosed(branch(),d)||novemberDemoClosed(d))return `<button class="calday closed-day" data-day="${d}"><b>${d}</b><span>●</span><small>Gesloten</small></button>`;
+  if(activeMonth==='2026-11')return `<button class="calday filled" data-day="${d}"><b>${d}</b><span class="dot full"></span><small>Vol</small></button>`;
+  const daySlots=slots(d),free=daySlots.filter(s=>!booking(d,s.id)).length;
+  const pending=proposals.some(p=>p.status==='pending'&&p.branch===branch()&&p.day===d);
+  const dayEntries=current().filter(e=>e.day===d);
+  const visibleEntries=personalView()?dayEntries.filter(e=>e.company===company().id):dayEntries;
+  const labels=[];
+  if(visibleEntries.some(e=>e.kind==='regular'))labels.push('Regulier');
+  if(visibleEntries.some(e=>e.kind==='backup'))labels.push('Back-up');
+  const ownDuty=personalView()&&visibleEntries.length>0;
+  const reminded=coordinator()&&(reminderDates[branch()]||[]).includes(d);
+  const statusClass=ownDuty?'my-duty':pending||reminded?'proposal-day':free===0?'filled':'available';
+  const statusText=ownDuty?'Mijn dienst':pending?'Voorstel':reminded?'Herinnering':free===0?'Vol':`${free} vrij`;
+  return `<button class="calday ${statusClass}" data-day="${d}"><b>${d}</b><span class="dot ${pending||reminded?'proposal-dot':free===0?'full':''}"></span><small>${statusText}</small>${labels.map(label=>`<span class="duty-type">${label}</span>`).join('')}</button>`;
+ }).join('');
+ h=`<div class="card"><h2>${monthName(activeMonth)} · ${esc(branch())}</h2>${activeMonth==='2026-11'?'<p class="muted"><b>Historische kalenderdemonstratie:</b> alle geopende dagen zijn bezet (paars); 1, 15 en 29 november zijn gesloten (rood). Er zijn geen onderliggende dienstregistraties.</p>':''}<div class="calendar">${['ma','di','wo','do','vr','za','zo'].map(w=>`<div class="muted" style="text-align:center">${w}</div>`).join('')}${'<div></div>'.repeat((weekday(1)+6)%7)}${calendarDays}</div><p class="muted">Groen = beschikbare reguliere dienstpositie · paars = alle reguliere dienstposities bezet · geel = dienstvoorstel of openstaande dienst waarvoor een herinneringsmail is gegenereerd · rood = gesloten · turquoise = mijn eigen dienst (regulier of back-up). Klik op een dag voor details. Onder een datum staat in kleine letters Regulier en/of Back-up wanneer ${personalView()?'jouw bedrijf':'een deelnemer'} daar is ingeroosterd.</p></div>${coordinatorSelectedDay!==null?`<div id="coordinatorDayDetails">${activeMonth==='2026-11'?`<div class="card"><h3>${dayLabel(coordinatorSelectedDay)}</h3><p>${novemberDemoClosed(coordinatorSelectedDay)?'Gesloten':'Volledig bezet'} (historische kalenderdemonstratie)</p><p class="muted">Geen onderliggende dienst- of deelnemersgegevens.</p></div>`:dayCard(coordinatorSelectedDay)}<button class="soft" id="closeCoordinatorDay">Sluit details</button></div>`:''}`;
+}
+if(state.tab==='week'){h=`<div class="card row"><button class="soft" id="prev" ${state.week===0?'disabled':''}>← Vorige</button><b>${weeks[state.week][0]}–${weeks[state.week].at(-1)} december</b><button class="soft" id="next" ${state.week===4?'disabled':''}>Volgende →</button></div>${weeks[state.week].map(dayCard).join('')}`}
+if(state.tab==='day'){h=`${allSelected()?'<div class="card"><button class="soft" id="backAll">← Terug naar alle deelnemers</button></div>':''}<div class="card"><div class="row"><button class="soft" id="dayPrev" ${state.day===1?'disabled':''}>←</button><select id="daySelect">${options(Array.from({length:new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate()},(_,i)=>[i+1,dayLabel(i+1)]),state.day)}</select><button class="soft" id="dayNext" ${state.day===31?'disabled':''}>→</button></div></div>${dayCard(state.day)}`}
+if(state.tab==='signup'){h=`<div class="card"><h2>Inschrijven · ${monthName(activeMonth)} · ${esc(branch())}</h2><p class="muted">Bedrijf: ${esc(company().id)} – ${esc(company().name)}. Per filiaal twee reguliere diensten en twee back-ups.</p><div class="twocol"><div><label for="kind">Type</label><select id="kind"><option value="regular">Reguliere dienst</option><option value="backup">Back-up</option></select></div><div><label for="signupDay">Datum</label><select id="signupDay">${options(Array.from({length:new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate()},(_,i)=>[i+1,dayLabel(i+1)]),state.day)}</select></div><div><label for="signupSlot">Dienst</label><select id="signupSlot"></select></div><div><label for="worker">Naam medewerker (vrij invullen)</label><input id="worker" maxlength="80" placeholder="Bijv. Roelof of Marijke"></div></div><p id="signupHint" class="muted"></p><p id="signupError" role="alert" aria-live="assertive" style="display:none;color:#991b1b;background:#fee2e2;padding:12px;border-radius:8px;font-weight:650"></p><button id="submitSignup">Inschrijving vastleggen</button></div>`}
+if(state.tab==='mine'){h=`<div class="card"><h2>Mijn diensten · ${monthName(activeMonth)} · ${esc(company().id)} · ${esc(branch())}</h2>${mine().length?mine().slice().sort((a,b)=>a.day-b.day).map(e=>`<div class="item row"><div><b>${dayLabel(e.day)} · Dienst ${e.slot}</b><div class="muted">${e.kind==='backup'?'Back-up':'Regulier'} · ${esc(e.worker)} · ${esc(e.time)}</div></div><button class="soft" data-remove="${esc(e.id)}" ${isBranchLocked(branch())&&!coordinator()?'disabled':''}>Verwijder</button></div>`).join(''):'<p class="muted">Nog geen inschrijvingen voor dit bedrijf en filiaal.</p>'}</div>`}
+if(state.tab==='all'&&!coordinator()){let enrolled=companies.filter(c=>c.branches.includes(branch()));let branchEntries=current();let regular=branchEntries.filter(e=>e.kind==='regular'),standby=branchEntries.filter(e=>e.kind==='backup');h=`<div class="card"><h2>Alle deelnemers · ${esc(branch())}</h2><p class="muted">Gezamenlijk filiaaloverzicht, zichtbaar voor iedere deelnemer en de coördinator. Kies bovenaan een ander filiaal om het overzicht te wisselen.</p><div class="stats"><div class="stat"><strong>${enrolled.length}</strong><small>Deelnemende bedrijven</small></div><div class="stat"><strong>${regular.length}</strong><small>Bezet (paars)</small></div><div class="stat"><strong>${standby.length}</strong><small>Back-ups</small></div></div><h3 style="margin-top:16px">Bedrijven in dit filiaal</h3><div class="scroll"><table><thead><tr><th>Bedrijf</th><th>Regulier</th><th>Back-up</th><th>Uren</th></tr></thead><tbody>${enrolled.map(c=>{let es=branchEntries.filter(e=>e.company===c.id),rs=es.filter(e=>e.kind==='regular');return `<tr><td>${esc(c.id)} – ${esc(c.name)}</td><td>${rs.length}/2</td><td>${es.filter(e=>e.kind==='backup').length}/2</td><td>${rs.reduce((n,e)=>n+e.hours,0)}</td></tr>`}).join('')}</tbody></table></div></div><div class="card"><h2>Alle inschrijvingen per datum</h2><p class="muted">Groen = vrij · paars = bezet. Ook medewerkersnamen en back-ups zijn zichtbaar.</p><div class="row"><button class="soft" id="allPrev" ${state.week===0?'disabled':''}>← Vorige week</button><b>${weeks[state.week][0]}–${weeks[state.week][weeks[state.week].length-1]} dec</b><button class="soft" id="allNext" ${state.week===4?'disabled':''}>Volgende week →</button></div></div>${weeks[state.week].map(dayCard).join('')}`;}
+if(!coordinator()){
+ const pending=proposals.filter(p=>p.status==='pending'&&p.company===loggedInCompany);
+ if(pending.length)h=`<div class="card" style="border:2px solid #eab308"><h2>🟡 Dienstvoorstellen · wacht op jouw reactie (${pending.length})</h2><p class="muted">Voorstellen tellen pas mee na akkoord.</p>${pending.map(p=>`<div class="item"><b>${esc(p.branch)} · ${esc(dayLabel(p.day))} · Dienst ${p.slot}</b><div>${esc(p.time)} · ${p.kind==='backup'?'Back-up':'Regulier'}</div><div class="buttons"><button data-accept-proposal="${esc(p.id)}">Akkoord</button><button class="soft" data-decline-proposal="${esc(p.id)}">Afwijzen</button></div></div>`).join('')}</div>`+h;
+}
+if(state.tab==='manage'){let all=state.entries.filter(e=>e.kind==='regular'),allBack=state.entries.filter(e=>e.kind==='backup'),allOpen=branches.map(b=>({name:b[0],open:Array.from({length:new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate()},(_,i)=>i+1).reduce((n,d)=>n+(isClosed(b[0],d)?[]:slots(d,b[0])).filter(s=>!state.entries.some(e=>e.branch===b[0]&&e.day===d&&e.slot===s.id&&e.kind==='regular')).length,0)}));h=`<div class="card" id="compliancePanel"><h2>Bezettingscontrole per filiaal</h2><p class="muted">Eerste overzicht voor de coördinator. Norm per deelnemend bedrijf en per filiaal: minimaal één vroege volledige dienst (10:00–18:00), één kortere dienst. Back-ups zijn optioneel en tellen niet mee voor de norm. Op zaterdag, zondag en maandag beginnen gelijktijdige diensten op hetzelfde tijdstip. Bij onvoldoende vroege posities kan niet iedereen aan de norm voldoen. De fictieve testdata kan boven de norm uitkomen.</p><div class="twocol"><div><label for="complianceBranch">Toon filiaal</label><select id="complianceBranch">${options([['ALL','Alle filialen'],...branches.map(b=>[b[0],b[0]])],'ALL')}</select></div><div><label for="complianceFilter">Deelnemers</label><select id="complianceFilter"><option value="missing">Alleen onder de norm</option><option value="all">Alle deelnemers</option><option value="compliant">Voldoen aan de norm</option></select></div></div><div id="complianceResult"></div></div><div class="card"><h2>Filiaalvergrendeling en planningbeheer</h2><div id="branchLockControls"><p><label for="lockBranch">Filiaal voor vergrendeling</label><select id="lockBranch">${options(branches.map(b=>[b[0],b[0]]),branch())}</select><p><strong id="lockBranchStatus"></strong></p><button id="lockToggle">Vergrendel inschrijvingen</button> </p></div><p><button class="soft" id="resetDemo">90%-oefenrooster opnieuw genereren</button></p><h3>Open posities per filiaal</h3><div class="scroll"><table><thead><tr><th>Filiaal</th><th>Open</th><th>Bezet</th></tr></thead><tbody>${allOpen.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.open}</td><td>${all.filter(e=>e.branch===x.name).length}</td></tr>`).join('')}</tbody></table></div></div><div class="card"><h2>Planning ${monthName(activeMonth)}</h2><p class="muted">${monthMode()==='voorbereiding'?'Voorbereidingsschema voor de januariplanning; mijlpalen vallen in december 2026. Het rooster van januari is nog blanco.':'Planningsmijlpalen voor de geselecteerde maand.'}</p>${monthMode()==='voorbereiding'?planningEditor():planningSchedule().map(s=>`<div class="item row"><span>${esc(s[0])}</span><b>${esc(s[1])}</b></div>`).join('')}<p class="muted">Conceptdata, nog niet door Swan bevestigd.</p></div><div class="card"><h2>Diensten wijzigen of aanvullen</h2><p class="muted">De coördinator kan tijden, bezetting en back-ups aanpassen, diensten toevoegen en posities verwijderen.</p><div class="twocol"><div><label for="coordBranch">Filiaal</label><select id="coordBranch">${options(branches.map(b=>[b[0],b[0]]),branch())}</select></div><div><label for="coordDay">Datum</label><select id="coordDay">${options(Array.from({length:new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate()},(_,i)=>[i+1,dayLabel(i+1)]),state.day)}</select></div></div><div id="coordSlots"></div></div><div class="card"><h2>Extra dienstpositie</h2><p class="muted">Toevoegen voor het hierboven gekozen filiaal en de datum.</p><div class="twocol"><div><label>Begintijd</label><input id="newStart" type="time" value="11:00"></div><div><label>Eindtijd</label><input id="newEnd" type="time" value="17:00"></div></div><p><button id="addShift">Dienstpositie toevoegen</button></p></div>
+<div class="card"><h2>Deelnemers beheren</h2><p class="muted">Nieuwe deelnemers toevoegen, verwijderen en filiaaltoegang wijzigen kan uitsluitend in de voorbereidingsmaand. Wijzigingen blijven lokaal opgeslagen.</p><div class="twocol"><div><label>Nieuw bedrijfsnummer</label><input id="newCompanyId" placeholder="Bijv. 950"></div><div><label>Nieuwe bedrijfsnaam</label><input id="newCompanyName" placeholder="Bedrijfsnaam"></div></div><p><button id="newCompanySave">Deelnemer toevoegen</button></p><h3>Filiaaltoegang instellen</h3><p class="muted">Ieder bedrijf heeft een fictief e-mailadres onder swan-rooster.example. Dit zijn geen echte mailboxen; automatisch e-mail verzenden vereist later een server of maildienst.</p><label>Deelnemer</label><select id="manageCompany">${options(companies.map(c=>[c.id,c.id+' – '+c.name]),managedCompanyId)}</select><div id="accessBranches"></div><button id="saveAccess">Filiaaltoegang opslaan</button><hr><h3>Deelnemer verwijderen</h3><p class="muted">Alleen in de voorbereidingsmaand. Dit verwijdert de deelnemer ook uit de filiaaltoegang van die maand, niet uit eerdere maanden.</p><button type="button" class="soft" id="deleteCompany">Geselecteerde deelnemer verwijderen</button><p id="participantManageStatus" role="status"></p></div><div class="card" id="holidayPanel"><h2>Feestdagen / gesloten</h2><p class="muted">Voorbereiding vóór openstelling van het rooster. Kies een datum in ${monthName(activeMonth)} en sluit alle filialen tegelijk of één filiaal. De rode dagen zijn direct zichtbaar in het maandoverzicht. Heropenen kan hier ook.</p><div class="twocol"><div><label for="holidayBranch">Toepassen op</label><select id="holidayBranch">${options([['ALL','Alle filialen'],...branches.map(b=>[b[0],b[0]])],holidaySelectedBranch)}</select></div><div><label for="holidayDay">Datum</label><select id="holidayDay">${options(Array.from({length:new Date(Number(activeMonth.slice(0,4)),Number(activeMonth.slice(5)),0).getDate()},(_,i)=>[i+1,dayLabel(i+1)]),holidaySelectedDay)}</select></div></div><p id="holidayStatus" class="muted"></p><div class="buttons"><button id="holidayClose" type="button">Markeer rood / gesloten</button><button id="holidayOpen" type="button" class="soft">Heropen dag</button><button id="holidayMonth" type="button" class="soft">Bekijk maandoverzicht</button></div></div>`}
+$('content').innerHTML=h;
+// De beheerfuncties blijven in de DOM voor hun bestaande eventhandlers,
+// maar de coördinator ziet telkens slechts één gekozen onderdeel.
+const manageTabs=$('manageTabs');
+if(coordinator()&&state.tab==='manage'){
+ const phase=document.createElement('div');phase.className='card';phase.id='planningPhaseBanner';
+ phase.innerHTML='<b>Planningfase · '+monthName(activeMonth)+'</b><p style="margin:6px 0">'+esc(monthMode()==='voorbereiding'?'Voorbereiding (blanco rooster, inrichting toegestaan)':planningPhase())+'</p><p class="muted" style="margin:0">Simulatiedatum: 20 november 2026. Voorlopige planningsmijlpalen staan in de maand voorafgaand aan ${monthName(activeMonth)}. Per filiaal kan later afzonderlijk worden vergrendeld.</p>';
+ $('content').prepend(phase);
+}
+
+if(coordinator()&&state.tab==='manage'){
+ const panel=document.createElement('div');panel.className='card';panel.id='branchHoursPanel';
+ panel.innerHTML=`<h2>Filialen · drie dienstblokken per weekdag</h2><p class="muted">Stel per filiaal en weekdag een dagdienst, middagdienst en optionele koopavonddienst in. De dienstsjablonen van het huidige oefenrooster wijzigen niet automatisch.</p><label>Filiaal</label><select id="hoursBranch">${options(branches.map(b=>[b[0],b[0]]),branch())}</select><div class="scroll"><table><thead><tr><th>Weekdag</th><th>Dagdienst</th><th>Middagdienst</th><th>Koopavond (optioneel)</th></tr></thead><tbody>${['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag','Zondag'].map((name,i)=>`<tr data-hours-row="${i}"><td><b>${name}</b></td>${['day','afternoon','evening'].map((type)=>`<td><label><input type="checkbox" data-block="${type}" ${type!=='evening'?'checked':''}> Actief</label><div class="row"><input aria-label="${name} ${type} start" type="time" data-start="${type}" value="${type==='day'?'10:00':type==='afternoon'?'12:00':'18:00'}"><input aria-label="${name} ${type} einde" type="time" data-end="${type}" value="${type==='evening'?'21:00':'18:00'}"></div></td>`).join('')}</tr>`).join('')}</tbody></table></div><p><button id="saveBranchHours">Dienstblokken opslaan</button> <button class="soft" id="clearBranchHours">Standaardweek herstellen</button></p><p id="hoursFeedback" class="muted" role="status"></p>`;
+ panel.insertAdjacentHTML('beforeend',`<hr><h3>Filialen beheren</h3><p class="muted">Alleen in januari 2027 (voorbereiding). Wijzigingen gelden niet voor december of november.</p><div class="twocol"><div><label>Nieuw filiaal</label><input id="newBranchName" placeholder="Bijv. Alkmaar"></div><div><label>Filiaalcode</label><input id="newBranchCode" placeholder="Bijv. SMS 072"></div></div><p><button id="addBranch">Filiaal toevoegen</button></p><label>Filiaal verwijderen</label><select id="removeBranchName">${options(branches.map(b=>[b[0],b[0]]))}</select><p><button class="soft" id="removeBranch">Geselecteerd filiaal verwijderen</button></p><p id="branchManageStatus" role="status"></p>`);
+ $('content').appendChild(panel);
+}
+manageTabs.classList.toggle('hidden',!(coordinator()&&state.tab==='manage'));
+if(coordinator()&&state.tab==='manage'){
+ const cards=Array.from($('content').children).filter(el=>el.classList.contains('card')&&el.id!=='planningPhaseBanner');
+ const preparation=monthMode()==='voorbereiding';
+ // Elke kaart hoort bij precies één tab. Zoek op vaste inhoud in plaats van
+ // te vertrouwen op verschuivende posities in de DOM.
+ const findCard=(selector)=>cards.find(el=>el.matches(selector)||el.querySelector(selector));
+ const complianceCard=findCard('#compliancePanel');
+ const overviewCard=findCard('#branchLockControls');
+ const planningCard=cards.find(el=>el.querySelector('h2')?.textContent.startsWith('Planning '));
+ const servicesCard=findCard('#coordBranch');
+ const participantCard=findCard('#manageCompany');
+ const holidayCard=findCard('#holidayPanel');
+ const branchCard=findCard('#branchHoursPanel');
+ const used=new Set([complianceCard,overviewCard,planningCard,servicesCard,participantCard,holidayCard,branchCard].filter(Boolean));
+ const otherCards=cards.filter(el=>!used.has(el));
+ const sections=[
+  ...(!preparation?[{id:'compliance',label:'Bezettingscontrole',cards:[complianceCard]}]:[]),
+  {id:'overview',label:preparation?'Planning':'Overzicht & planning',cards:preparation?[planningCard]:[overviewCard,planningCard]},
+  ...(!preparation?[{id:'services',label:'Diensten beheren',cards:[servicesCard,...otherCards]}]:[]),
+  {id:'participants',label:'Deelnemers beheren',cards:[participantCard]},
+  {id:'holidays',label:'Feestdagen / gesloten',cards:[holidayCard]},
+  {id:'branches',label:preparation?'Filialen beheren':'Filialen',cards:[branchCard]}
+ ];
+ sections.forEach(section=>{
+  const pane=document.createElement('section');pane.className='manage-section';pane.dataset.manageSection=section.id;
+  section.cards.filter(Boolean).forEach(card=>pane.appendChild(card));$('content').appendChild(pane);
+ });
+ // Kaarten zonder zichtbare tab blijven in de DOM voor bestaande handlers,
+ // maar zijn altijd verborgen en kunnen niet door andere tabbladen heen lekken.
+ const hiddenPane=document.createElement('section');hiddenPane.id='inactiveManagePanels';hiddenPane.hidden=true;
+ cards.filter(card=>card.parentElement===$('content')).forEach(card=>hiddenPane.appendChild(card));
+ $('content').appendChild(hiddenPane);
+ if(!sections.some(x=>x.id===manageSection))manageSection='overview';
+ manageTabs.innerHTML=sections.map(x=>`<button type="button" data-manage-nav="${x.id}">${x.label}</button>`).join('');
+ if(preparation){
+  // De voorbereidingsmaand heeft geen gevuld oefenrooster: verwijder acties
+  // die uitsluitend bij de actieve planningsmaand horen.
+  const regenerate=$('regenerateDemo');if(regenerate)regenerate.disabled=true;
+ }
+ const activate=id=>{
+  manageSection=id;
+  document.querySelectorAll('[data-manage-section]').forEach(p=>p.classList.toggle('active',p.dataset.manageSection===id));
+  manageTabs.querySelectorAll('[data-manage-nav]').forEach(b=>b.classList.toggle('active',b.dataset.manageNav===id));
+ };
+ manageTabs.querySelectorAll('[data-manage-nav]').forEach(b=>b.onclick=()=>{activate(b.dataset.manageNav);feedback('Beheeronderdeel '+b.textContent.trim()+' geopend.');});
+ activate(manageSection);
+}
+
+if($('planningDatesForm')){
+ $('planningDatesForm').onsubmit=e=>{
+  e.preventDefault();
+  if(monthMode()!=='voorbereiding'){feedback('Planningsdatums mogen alleen in de voorbereidingsmaand worden aangepast.',false);return}
+  const dates=schedule.map((_,i)=>$('planningDate'+i).value);
+  if(dates.some(d=>!/^\d{4}-\d{2}-\d{2}$/.test(d)||Number.isNaN(new Date(d+'T12:00:00').getTime()))){feedback('Vul alle vijf datums correct in.',false);return}
+  if(dates.some((d,i)=>i>0&&d<dates[i-1])){feedback('De planningsdatums moeten in chronologische volgorde staan.',false);return}
+  planningDates[activeMonth]=dates;
+  try{localStorage.setItem(planningDatesKey,JSON.stringify(planningDates));feedback('De vijf planningsdatums voor '+monthName(activeMonth)+' zijn opgeslagen.')}
+  catch(err){feedback('Opslaan mislukt: lokale opslag is niet beschikbaar.',false)}
+ };
+}
+if($('addBranch')){
+ $('addBranch').onclick=()=>{
+  if(monthMode()!=='voorbereiding')return alert('Filialen aanpassen kan alleen in de voorbereidingsmaand.');
+  const name=$('newBranchName').value.trim(),code=$('newBranchCode').value.trim();
+  if(!name||!code)return alert('Vul filiaalnaam en filiaalcode in.');
+  if(branches.some(b=>b[0].toLowerCase()===name.toLowerCase()))return alert('Dit filiaal bestaat al.');
+  branches.push([name,code]);storeMonth();setBranchOptions();manageSection='branches';render();feedback('Filiaal '+name+' toegevoegd aan '+monthName(activeMonth)+'.');
+ };
+ $('removeBranch').onclick=()=>{
+  if(monthMode()!=='voorbereiding')return alert('Filialen aanpassen kan alleen in de voorbereidingsmaand.');
+  const name=$('removeBranchName').value;
+  if(branches.length<=1)return alert('Minimaal één filiaal is vereist.');
+  if(!confirm('Filiaal '+name+' uitsluitend uit '+monthName(activeMonth)+' verwijderen?'))return;
+  branches=branches.filter(b=>b[0]!==name);
+  companies.forEach(c=>c.branches=c.branches.filter(b=>b!==name));
+  state.entries=state.entries.filter(e=>e.branch!==name);
+  proposals=proposals.filter(e=>e.branch!==name);
+  for(const obj of [closedDays,shiftOverrides,branchHours,reminderDates,reminderStatus,branchLocks])
+   for(const k of Object.keys(obj))if(k===name||k.startsWith(name+'|'))delete obj[k];
+  storeMonth();setBranchOptions();manageSection='branches';render();feedback('Filiaal '+name+' verwijderd uit '+monthName(activeMonth)+'.');
+ };
+}
+if($('hoursBranch')){
+ const rows=()=>Array.from(document.querySelectorAll('[data-hours-row]'));
+ const defaults=()=>({day:{active:true,start:'10:00',end:'18:00'},afternoon:{active:true,start:'12:00',end:'18:00'},evening:{active:false,start:'18:00',end:'21:00'}});
+ const refreshHours=()=>{
+  const b=$('hoursBranch').value;
+  rows().forEach((tr,i)=>{
+   const stored=branchHours[b+'|weekday|'+i];
+   const v=stored?.day?stored:stored?{day:{active:stored.open!==false,start:stored.start,end:stored.end},afternoon:defaults().afternoon,evening:{active:!!stored.evening,start:'18:00',end:'21:00'}}:defaults();
+   for(const type of ['day','afternoon','evening']){
+    const block=v[type]||defaults()[type];
+    tr.querySelector('[data-block="'+type+'"]').checked=!!block.active;
+    tr.querySelector('[data-start="'+type+'"]').value=block.start;
+    tr.querySelector('[data-end="'+type+'"]').value=block.end;
+   }
+  });
+  $('hoursFeedback').textContent='Dienstblokken voor '+b+' geladen.';
+ };
+ $('hoursBranch').onchange=refreshHours;
+ $('saveBranchHours').onclick=()=>{if(monthMode()!=='voorbereiding')return alert('Inrichting aanpassen kan uitsluitend in de voorbereidingsmaand.');
+  const b=$('hoursBranch').value,values=[];
+  for(const tr of rows()){
+   const v={};
+   for(const type of ['day','afternoon','evening']){
+    const block={active:tr.querySelector('[data-block="'+type+'"]').checked,start:tr.querySelector('[data-start="'+type+'"]').value,end:tr.querySelector('[data-end="'+type+'"]').value};
+    if(block.active&&(!block.start||!block.end||block.start>=block.end)){
+     $('hoursFeedback').textContent='Ongeldige tijden bij '+['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag','Zondag'][values.length]+', '+type+'.';feedback($('hoursFeedback').textContent,false);return;
+    }
+    v[type]=block;
+   }
+   values.push(v);
+  }
+  values.forEach((v,i)=>branchHours[b+'|weekday|'+i]=v);
+  saveBranchHours();$('hoursFeedback').textContent='Drie dienstblokken voor alle zeven weekdagen van '+b+' opgeslagen.';feedback('Dienstblokken van '+b+' opgeslagen voor '+monthName(activeMonth)+'.');
+ };
+ $('clearBranchHours').onclick=()=>{
+  if(monthMode()!=='voorbereiding')return failure('Dienstblokken herstellen kan alleen in de voorbereidingsmaand.');
+  const b=$('hoursBranch').value;
+  for(let i=0;i<7;i++)delete branchHours[b+'|weekday|'+i];
+  saveBranchHours();refreshHours();$('hoursFeedback').textContent='Standaardweek hersteld.';feedback('Standaardweek van '+b+' hersteld.');
+ };
+ refreshHours();
+}
+function updateCompliance(){
+ if(!$('complianceResult'))return;
+ const chosen=$('complianceBranch').value,filterMode=$('complianceFilter').value;
+ let groups=branches.filter(b=>chosen==='ALL'||b[0]===chosen).map(b=>{
+ const members=companies.filter(c=>c.branches.includes(b[0])).map(c=>{
+ const entries=state.entries.filter(e=>e.branch===b[0]&&e.company===c.id);
+ const regs=entries.filter(e=>e.kind==='regular'),backs=entries.filter(e=>e.kind==='backup');
+ return {company:c,regular:regs.length,backup:backs.length,hours:regs.reduce((n,e)=>n+Number(e.hours||0),0),missingRegular:regularNorm(entries)?0:Math.max(1,2-regs.length),missingBackup:0};
+ });
+ return {branch:b[0],members,missing:members.filter(x=>x.missingRegular)};
+ });
+ let total=groups.reduce((n,g)=>n+g.missing.length,0);
+ // Controleer per filiaal, niet op alle filialen van een deelnemer tegelijk.
+ const eligibleCount=groups.reduce((n,g)=>n+g.members.length,0);
+ const compliant=groups.reduce((n,g)=>n+g.members.filter(x=>!x.missingRegular).length,0);
+ const percent=eligibleCount?Math.round(compliant/eligibleCount*100):0;
+ const unit=chosen==='ALL'?'deelnemer-filiaalcombinaties':'deelnemers';
+ const verb=compliant===1?'voldoet':'voldoen';
+ const mailBranch=chosen==='ALL'?'':chosen;
+ const missingMembers=mailBranch?groups[0]?.missing||[]:[];
+ const addresses=missingMembers.map(x=>x.company.email||demoEmail(x.company));
+ const mailText=`Beste deelnemer,\n\nVolgens onze roosteradministratie voor Swan Market Store ${mailBranch} heb je voor december 2026 nog niet aan de verplichte dienstnorm voldaan.\n\nDe norm bestaat uit één vroege volledige dienst (bijvoorbeeld 10:00–18:00) en één kortere dienst (bijvoorbeeld 12:00–18:00). Back-updiensten zijn vrijwillig en tellen niet mee voor deze norm.\n\nWil je je rooster controleren en de ontbrekende reguliere dienst(en) zo spoedig mogelijk invullen? Op gesloten dagen is inschrijven niet mogelijk.\n\nHeb je al diensten ingepland of vragen over de indeling, neem dan contact op met de coördinator.\n\nMet vriendelijke groet,\nCoördinatie Swan Market Store ${mailBranch}`;
+ $('complianceResult').innerHTML=`${mailBranch?`<div class="card"><h3>E-mailconcept voor ${esc(mailBranch)}</h3><p class="muted">${missingMembers.length} deelnemers voldoen nog niet aan de norm. Dit is een concept; er wordt niets automatisch verzonden. Gebruik vóór echte verzending geldige e-mailadressen.</p><p id="reminderStatusText" class="muted"></p><p><button type="button" id="makeReminder">Genereer herinneringsmail</button> <button type="button" class="soft" id="markReminderSent">Markeer als verzonden</button> <button type="button" class="soft" id="resetReminderStatus">Status wissen</button></p><div id="mailDraft" class="hidden"><label>Ontvangers (BCC, fictieve testadressen)</label><textarea id="mailRecipients" rows="2" readonly>${esc(addresses.join('; '))}</textarea><label>Onderwerp</label><input id="mailSubject" readonly value="${esc('Herinnering rooster december 2026 – Swan Market Store '+mailBranch)}"><label>Bericht</label><textarea id="mailBody" rows="12" readonly>${esc(mailText)}</textarea><p><button type="button" id="copyMail">Kopieer e-mailtekst</button></p><p class="muted">Voor verzending is een echte e-maildienst nodig. De fictieve .example-adressen ontvangen geen e-mail.</p></div></div>`:''}<p><b>${compliant} van ${eligibleCount} ${unit} ${verb} volledig aan de norm (${percent}%).</b></p><p><b>${filterMode==='compliant'?compliant:total} ${filterMode==='compliant'?'deelnemer-filiaalcombinaties voldoen aan de norm':'deelnemer-filiaalcombinaties onder de norm'}</b> in ${groups.length} ${groups.length===1?'filiaal':'filialen'}.</p>${groups.filter(g=>filterMode!=='compliant'||g.members.some(x=>!x.missingRegular)).map(g=>{let rows=filterMode==='missing'?g.missing:filterMode==='compliant'?g.members.filter(x=>!x.missingRegular):g.members;return `<details ${chosen!=='ALL'?'open':''} class="card" style="margin:10px 0"><summary style="cursor:pointer"><b>${esc(g.branch)}</b> · ${filterMode==='compliant'?g.members.length-g.missing.length:g.missing.length} ${filterMode==='compliant'?'voldoen aan de norm':'onder de norm'}</summary>${rows.length?`<div class="scroll"><table><thead><tr><th>Deelnemer</th><th>Regulier</th><th>Back-up (optioneel)</th><th>Ontbreekt</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x.company.id)} – ${esc(x.company.name)}<div class="muted">${esc(x.company.email||demoEmail(x.company))}</div></td><td>${x.regular}/2</td><td>${x.backup}/2</td><td>${x.missingRegular?'Vroege/korte combinatie ontbreekt ':''}${!x.missingRegular?'Voldoet':''}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">Alle deelnemers voldoen aan de norm.</p>'}</details>`}).join('')}`;
+ if(mailBranch&&$('reminderStatusText')){
+  const showReminderStatus=()=>{
+   const r=reminderStatus[mailBranch];
+   $('reminderStatusText').textContent=r
+    ?'Status '+mailBranch+': '+(r.status==='sent'?'VERZONDEN (handmatig bevestigd)':'CONCEPT GEGENEREERD')+' op '+new Date(r.at).toLocaleString('nl-NL')+' · '+r.count+' ontvangers.'
+    :'Status '+mailBranch+': nog geen herinnering gegenereerd of verzonden.';
+  };
+  $('markReminderSent').onclick=()=>{
+   if(!reminderStatus[mailBranch]){alert('Genereer eerst de herinneringsmail.');return}
+   if(!confirm('Bevestig dat je de herinneringsmail voor '+mailBranch+' daadwerkelijk buiten deze applicatie hebt verzonden.'))return;
+   reminderStatus[mailBranch]={...reminderStatus[mailBranch],status:'sent',at:new Date().toISOString()};
+   saveReminderStatus();showReminderStatus();
+  };
+  $('resetReminderStatus').onclick=()=>{
+   if(!confirm('Herinneringsstatus voor '+mailBranch+' wissen?'))return;
+   delete reminderStatus[mailBranch];delete reminderDates[mailBranch];
+   saveReminderStatus();try{localStorage.setItem(reminderDatesKey,JSON.stringify(reminderDates))}catch(e){}
+   showReminderStatus();
+  };
+  showReminderStatus();
+ }
+ if($('makeReminder'))$('makeReminder').onclick=()=>{
+  $('mailDraft').classList.remove('hidden');
+  const days=markReminderDates(mailBranch);
+  reminderStatus[mailBranch]={status:'draft',at:new Date().toISOString(),count:missingMembers.length};
+  saveReminderStatus();
+  if($('reminderStatusText'))$('reminderStatusText').textContent='Status '+mailBranch+': CONCEPT GEGENEREERD · '+missingMembers.length+' ontvangers. Nog niet verzonden.';
+  const note=document.createElement('p');note.className='muted';note.textContent=days.length
+   ?'Gemarkeerd: '+days.map(dayLabel).join(', ')+'. Deze datums zijn geel in het maandoverzicht van '+mailBranch+'.'
+   :'Er zijn geen openstaande reguliere diensten om geel te markeren.';
+  const existing=$('reminderMarkedNotice');if(existing)existing.remove();
+  note.id='reminderMarkedNotice';$('mailDraft').appendChild(note);
+};
+ if($('copyMail'))$('copyMail').onclick=()=>{
+  const body=$('mailBody').value,subject=$('mailSubject').value,recipients=$('mailRecipients').value;
+  const payload='BCC: '+recipients+'\nOnderwerp: '+subject+'\n\n'+body;
+  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(payload).then(()=>alert('E-mailconcept gekopieerd.')).catch(()=>{$('mailBody').focus();$('mailBody').select()});
+  else {$('mailBody').focus();$('mailBody').select();alert('Selecteer en kopieer de e-mailtekst.')};
+ };
+
+}
+if($('holidayPanel')){
+ const status=()=>{const b=$('holidayBranch').value,d=Number($('holidayDay').value);const names=b==='ALL'?branches.map(x=>x[0]):[b];const n=names.filter(x=>isClosed(x,d)).length;$('holidayStatus').textContent=`${dayLabel(d)}: ${n} van ${names.length} geselecteerde filialen gesloten.`;};
+ $('holidayBranch').onchange=()=>{holidaySelectedBranch=$('holidayBranch').value;status()};$('holidayDay').onchange=()=>{holidaySelectedDay=Number($('holidayDay').value);status()};
+ $('holidayClose').onclick=()=>{if(monthMode()!=='voorbereiding')return alert('Gesloten dagen kunnen uitsluitend in de blanco voorbereidingsmaand worden aangepast.');const b=$('holidayBranch').value,d=Number($('holidayDay').value);const affected=b==='ALL'?branches.map(x=>x[0]):[b];const booked=state.entries.filter(e=>affected.includes(e.branch)&&e.day===d);if(booked.length&&!confirm(`Er staan ${booked.length} inschrijvingen op deze datum. Deze verwijderen en de dag sluiten?`))return;state.entries=state.entries.filter(e=>!(affected.includes(e.branch)&&e.day===d));try{localStorage.setItem(key,JSON.stringify(state.entries))}catch(e){};holidaySelectedBranch=b;holidaySelectedDay=d;setClosure(d,b,true);manageSection='holidays';render();feedback('Dag '+dayLabel(d)+' gesloten voor '+(b==='ALL'?'alle filialen':b)+'.');};
+ $('holidayOpen').onclick=()=>{if(monthMode()!=='voorbereiding')return alert('Gesloten dagen kunnen uitsluitend in de blanco voorbereidingsmaand worden aangepast.');holidaySelectedDay=Number($('holidayDay').value);holidaySelectedBranch=$('holidayBranch').value;setClosure(holidaySelectedDay,holidaySelectedBranch,false);manageSection='holidays';render();feedback('Dag '+dayLabel(holidaySelectedDay)+' heropend voor '+(holidaySelectedBranch==='ALL'?'alle filialen':holidaySelectedBranch)+'.');};
+ $('holidayMonth').onclick=()=>{state.tab='month';render();feedback('Maandoverzicht geopend.');};status();
+}
+if($('complianceResult')){
+ $('complianceBranch').onchange=updateCompliance;$('complianceFilter').onchange=updateCompliance;
+ updateCompliance();
+}
+
+function updateCoordinatorSlots(){
+ if(!$('coordSlots'))return;
+ const b=$('coordBranch').value,d=Number($('coordDay').value);
+ $('coordSlots').innerHTML=slots(d,b).map(sl=>{
+ const e=state.entries.find(x=>x.branch===b&&x.day===d&&x.slot===sl.id&&x.kind==='regular');
+ const backups=state.entries.filter(x=>x.branch===b&&x.day===d&&x.slot===sl.id&&x.kind==='backup');
+ const start=sl.time.slice(0,5),end=sl.time.slice(-5);
+ return `<div class="item"><h3>Dienst ${sl.id} · ${esc(sl.time)}</h3><div class="twocol">
+ <div><label>Starttijd</label><input type="time" data-cstart="${sl.id}" value="${esc(start)}"></div>
+ <div><label>Eindtijd</label><input type="time" data-cend="${sl.id}" value="${esc(end)}"></div>
+ <div><label>Bedrijf (regulier)</label><select data-ccompany="${sl.id}">${options([['','Vrije positie'],...companies.map(c=>[c.id,c.id+' – '+c.name])],e?.company||'')}</select></div>
+ <div><label>Medewerker</label><input data-cworker="${sl.id}" value="${esc(e?.worker||'')}" placeholder="Naam medewerker"></div></div>
+ <p class="muted">Back-ups: ${backups.length?backups.map(x=>`${esc(x.company)} · ${esc(x.worker)} <button class="soft" data-cdelbackup="${esc(x.id)}">Verwijder</button>`).join(' '):'Geen'}</p>
+ <div class="buttons"><button data-csave="${sl.id}">Bewaar dienst</button><button class="soft" data-cbackup="${sl.id}">Back-up toevoegen</button><button class="danger" data-cdelete="${sl.id}">Verwijder dienstpositie</button></div></div>`;
+ }).join('');
+ document.querySelectorAll('[data-csave]').forEach(btn=>btn.onclick=()=>{
+ const id=Number(btn.dataset.csave),start=document.querySelector(`[data-cstart="${id}"]`).value,end=document.querySelector(`[data-cend="${id}"]`).value,cid=document.querySelector(`[data-ccompany="${id}"]`).value,worker=document.querySelector(`[data-cworker="${id}"]`).value.trim();
+ if(isClosed(b,d))return alert('Dit filiaal is op deze datum gesloten.');if(!start||!end||end<=start)return alert('Ongeldige begin- of eindtijd.');if(cid&&!worker)return alert('Vul de medewerkersnaam in.');
+ let hrs=(Number(end.slice(0,2))*60+Number(end.slice(3))-Number(start.slice(0,2))*60-Number(start.slice(3)))/60;
+ let list=slots(d,b).map(x=>({...x})),sl=list.find(x=>x.id===id);sl.time=start+'–'+end;sl.hours=hrs;
+ shiftOverrides[b+'|'+d]=list;saveShifts();
+ state.entries=state.entries.filter(x=>!(x.branch===b&&x.day===d&&x.slot===id&&x.kind==='regular'));
+ if(cid)state.entries.push({id:'coord-'+Date.now()+'-'+Math.random(),company:cid,branch:b,day:d,slot:id,kind:'regular',worker,time:sl.time,hours:hrs});
+ state.entries.filter(x=>x.branch===b&&x.day===d&&x.slot===id).forEach(x=>{x.time=sl.time;x.hours=hrs});persist();feedback('Dienst '+id+' opgeslagen voor '+b+' op '+dayLabel(d)+'.');
+ });
+ document.querySelectorAll('[data-cbackup]').forEach(btn=>btn.onclick=()=>{
+ if(isClosed(b,d))return alert('Dit filiaal is op deze datum gesloten.');let id=Number(btn.dataset.cbackup),cid=prompt('Bedrijfsnummer voor de back-up:');if(cid===null)return;
+ if(!companies.some(c=>c.id===cid))return alert('Dit bedrijfsnummer bestaat niet.');
+ let worker=prompt('Naam medewerker voor de back-up:');if(!worker?.trim())return;
+ let sl=slots(d,b).find(x=>x.id===id);
+ state.entries.push({id:'backup-'+Date.now()+'-'+Math.random(),company:cid,branch:b,day:d,slot:id,kind:'backup',worker:worker.trim(),time:sl.time,hours:sl.hours});persist();feedback('Back-up toegevoegd voor '+b+' op '+dayLabel(d)+'.');
+ });
+ document.querySelectorAll('[data-cdelbackup]').forEach(btn=>btn.onclick=()=>{state.entries=state.entries.filter(x=>x.id!==btn.dataset.cdelbackup);persist();feedback('Back-up verwijderd.')});
+ document.querySelectorAll('[data-cdelete]').forEach(btn=>btn.onclick=()=>{
+ let id=Number(btn.dataset.cdelete);if(!confirm('Dienstpositie en alle bijbehorende inschrijvingen verwijderen?'))return;
+ shiftOverrides[b+'|'+d]=slots(d,b).filter(x=>x.id!==id);saveShifts();state.entries=state.entries.filter(x=>!(x.branch===b&&x.day===d&&x.slot===id));persist();feedback('Dienstpositie '+id+' verwijderd voor '+b+' op '+dayLabel(d)+'.');
+ });
+}
+function renderAccessCheckboxes(){
+ if(!$('accessBranches'))return;let c=companies.find(x=>x.id===$('manageCompany').value);if(!c)return;
+ $('accessBranches').innerHTML=branches.map(b=>`<label style="display:flex;gap:8px;align-items:center;margin:9px 0"><input type="checkbox" style="width:auto" data-access="${esc(b[0])}" ${c.branches.includes(b[0])?'checked':''}> ${esc(b[0])}</label>`).join('');
+}
+if($('coordSlots')){
+ $('coordBranch').onchange=updateCoordinatorSlots;$('coordDay').onchange=updateCoordinatorSlots;updateCoordinatorSlots();
+ $('addShift').onclick=()=>{
+ if(monthMode()!=='voorbereiding')return alert('Dienstsjablonen aanpassen kan alleen in de voorbereidingsmaand.');
+ let b=$('coordBranch').value,d=Number($('coordDay').value),start=$('newStart').value,end=$('newEnd').value;
+ if(isClosed(b,d))return alert('Dit filiaal is op deze datum gesloten.');if(!start||!end||end<=start)return alert('Ongeldige begin- of eindtijd.');
+ let list=slots(d,b).map(x=>({...x})),id=Math.max(0,...list.map(x=>x.id))+1;
+ list.push({id,time:start+'–'+end,hours:(Number(end.slice(0,2))*60+Number(end.slice(3))-Number(start.slice(0,2))*60-Number(start.slice(3)))/60});
+ shiftOverrides[b+'|'+d]=list;saveShifts();render();feedback('Dienstpositie toegevoegd voor '+b+' op '+dayLabel(d)+'.');
+ };
+}
+if($('newCompanySave')){
+ $('newCompanySave').onclick=()=>{
+ if(monthMode()!=='voorbereiding')return alert('Deelnemers aanpassen kan alleen in de voorbereidingsmaand.');
+ let id=$('newCompanyId').value.trim(),name=$('newCompanyName').value.trim();
+ if(!id||!name)return alert('Vul bedrijfsnummer en naam in.');
+ if(companies.some(c=>c.id===id))return alert('Bedrijfsnummer bestaat al.');
+ companies.push({id,name,email:demoEmail({id}),branches:[]});
+ managedCompanyId=id;
+ saveCompanies();
+ refreshCompanySelector('ALL');
+ $('loginCompany').innerHTML=options(companies.map(c=>[c.id,c.id+' – '+c.name]),id);
+ render();feedback('Deelnemer '+name+' ('+id+') toegevoegd aan '+monthName(activeMonth)+'. Selecteer nu de filiaaltoegang.');
+ };
+ $('manageCompany').onchange=()=>{managedCompanyId=$('manageCompany').value;renderAccessCheckboxes();};
+ $('saveAccess').onclick=()=>{
+ if(monthMode()!=='voorbereiding')return alert('Filiaaltoegang aanpassen kan alleen in de voorbereidingsmaand.');
+ let c=companies.find(x=>x.id===$('manageCompany').value);if(!c)return;
+ managedCompanyId=c.id;
+ c.branches=[...document.querySelectorAll('[data-access]:checked')].map(el=>el.dataset.access);
+ saveCompanies();refreshCompanySelector();render();feedback('Filiaaltoegang voor '+c.name+' opgeslagen in '+monthName(activeMonth)+'.');
+ };
+ if($('deleteCompany'))$('deleteCompany').onclick=()=>{
+  if(monthMode()!=='voorbereiding')return alert('Deelnemers verwijderen kan alleen in de voorbereidingsmaand.');
+  const id=$('manageCompany').value,c=companies.find(x=>x.id===id);if(!c)return;
+  if(!confirm('Deelnemer '+c.name+' uitsluitend uit '+monthName(activeMonth)+' verwijderen?'))return;
+  companies=companies.filter(x=>x.id!==id);
+  state.entries=state.entries.filter(e=>e.company!==id);
+  proposals=proposals.filter(e=>e.company!==id);
+  managedCompanyId=companies[0]?.id||'';
+  saveCompanies();storeMonth();
+  refreshCompanySelector('ALL');
+  $('loginCompany').innerHTML=options(companies.map(x=>[x.id,x.id+' – '+x.name]));
+  setBranchOptions();render();
+  feedback('Deelnemer '+c.name+' ('+id+') verwijderd uit '+monthName(activeMonth)+'. Andere maanden blijven behouden.');
+ };
+ renderAccessCheckboxes();
+ if(monthMode()!=='voorbereiding'){
+  ['newCompanySave','saveAccess','deleteCompany','addBranch','removeBranch','saveBranchHours','clearBranchHours'].forEach(id=>{const btn=$(id);if(btn){btn.disabled=true;btn.title='Alleen beschikbaar in de voorbereidingsmaand'}});
+ }
+}
+document.querySelectorAll('[data-accept-proposal]').forEach(btn=>btn.onclick=()=>respondProposal(btn.dataset.acceptProposal,true));
+document.querySelectorAll('[data-decline-proposal]').forEach(btn=>btn.onclick=()=>respondProposal(btn.dataset.declineProposal,false));
+document.querySelectorAll('[data-day]').forEach(el=>el.onclick=()=>{state.day=Number(el.dataset.day);coordinatorSelectedDay=state.day;state.tab='month';render();$('coordinatorDayDetails')?.scrollIntoView({block:'nearest'});feedback('Details van '+dayLabel(state.day)+' geopend.')});
+if($('closeCoordinatorDay'))$('closeCoordinatorDay').onclick=()=>{coordinatorSelectedDay=null;render();feedback('Dagdetails gesloten.');};
+document.querySelectorAll('[data-remove]').forEach(el=>el.onclick=()=>{if(!coordinator()&&isBranchLocked(branch()))return;let e=state.entries.find(x=>x.id===el.dataset.remove);if(!e||(!coordinator()&&e.company!==company().id))return;state.entries=state.entries.filter(x=>x.id!==e.id);persist();feedback('Inschrijving verwijderd voor '+dayLabel(e.day)+'.')});
+if($('backAll'))$('backAll').onclick=()=>{state.tab='all';render()};
+if($('allPrev'))$('allPrev').onclick=()=>{state.week=Math.max(0,state.week-1);render()};if($('allNext'))$('allNext').onclick=()=>{state.week=Math.min(4,state.week+1);render()};
+if($('prev'))$('prev').onclick=()=>{state.week=Math.max(0,state.week-1);render()};if($('next'))$('next').onclick=()=>{state.week=Math.min(4,state.week+1);render()};
+if($('dayPrev'))$('dayPrev').onclick=()=>{state.day=Math.max(1,state.day-1);render()};if($('dayNext'))$('dayNext').onclick=()=>{state.day=Math.min(31,state.day+1);render()};if($('daySelect'))$('daySelect').onchange=e=>{state.day=Number(e.target.value);render()};
+if($('branchLockControls'))$('branchLockControls').classList.toggle('hidden',!lockPhaseReached());
+if($('lockToggle')){
+ function showBranchLock(){const b=$('lockBranch').value,locked=isBranchLocked(b);$('lockBranchStatus').textContent=locked?'Inschrijvingen gesloten voor '+b:'Inschrijvingen open voor '+b;$('lockToggle').textContent=locked?'Heropen inschrijvingen · '+b:'Vergrendel inschrijvingen · '+b;}
+ $('lockBranch').onchange=showBranchLock;
+ $('lockToggle').onclick=()=>{if(!lockPhaseReached())return alert('Filiaalvergrendeling is pas beschikbaar vanaf de fase Definitief maken (20 november 2026).');const b=$('lockBranch').value;branchLocks[b]=!isBranchLocked(b);saveBranchLocks();showBranchLock();$('status').textContent=isBranchLocked(branch())?'Gesloten (demo)':'Open (demo)';feedback('Inschrijvingen voor '+b+(isBranchLocked(b)?' vergrendeld.':' heropend.'));};
+ showBranchLock();
+}
+if($('resetDemo')){$('resetDemo').disabled=monthMode()!=='planning';$('resetDemo').title=monthMode()!=='planning'?'Alleen beschikbaar in de planningsmaand':'';$('resetDemo').onclick=()=>{if(!confirm('Het huidige oefenrooster vervangen door een nieuw 90%-scenario?'))return;state.entries=sampleEntries();storeMonth();render();feedback('Oefenrooster opnieuw gegenereerd voor '+monthName(activeMonth)+'.');};}
+if($('signupDay')){
+ function reportSignupError(message){
+   const el=$('signupError');el.textContent=message;el.style.display='block';el.scrollIntoView({block:'nearest'});return false;
+ }
+ function normComplete(){return regularNorm(mine())}
+ function fillSlots(){
+   const d=Number($('signupDay').value);
+   $('signupSlot').innerHTML=options(slots(d).map(slot=>[slot.id,`Dienst ${slot.id} · ${slot.time}${booking(d,slot.id)?' (bezet)':''}`]),1);
+   $('signupError').style.display='none';
+   const closed=isClosed(branch(),d),norm=!coordinator()&&normComplete()&&$('kind').value==='regular';
+   $('signupHint').textContent=closed?'🔴 Deze dag is gesloten. Inschrijven is niet mogelijk.':norm?'Je voldoet al aan de norm (één vroege en één korte dienst). Extra reguliere inschrijving is niet mogelijk; back-ups zijn optioneel.':special(d)?'Let op: openingstijden op deze datum zijn nog niet bevestigd.':'';
+   $('signupHint').style.color=closed||norm?'#991b1b':'';
+ }
+ $('signupDay').onchange=fillSlots;$('kind').onchange=fillSlots;fillSlots();
+ $('submitSignup').onclick=()=>{if(monthMode()!=='planning')return reportSignupError('Inschrijven kan uitsluitend in de planningsmaand.');
+   const kind=$('kind').value,d=Number($('signupDay').value),slot=slots(d).find(x=>x.id===Number($('signupSlot').value)),worker=$('worker').value.trim();
+   if(isClosed(branch(),d))return reportSignupError('Inschrijven niet mogelijk: '+dayLabel(d)+' is een gesloten dag voor '+branch()+'. Kies een andere datum.');
+   if(!coordinator()&&kind==='regular'&&normComplete())return reportSignupError('Inschrijven niet mogelijk: je voldoet voor '+branch()+' al aan de norm (één vroege dienst en één korte dienst). Back-ups blijven optioneel.');
+   if(isBranchLocked(branch())&&!coordinator())return reportSignupError('Inschrijven niet mogelijk: de inschrijvingen voor '+branch()+' zijn door de coördinator gesloten.');
+   if(!worker)return reportSignupError('Vul eerst de naam van de medewerker in.');
+   if(!slot)return reportSignupError('Selecteer een geldige dienst.');
+   if(mine().filter(e=>e.kind===kind).length>=2&&!coordinator())return reportSignupError('Je hebt voor '+branch()+' al twee '+(kind==='regular'?'reguliere diensten':'back-ups')+' ingeschreven.');
+   if(kind==='regular'&&booking(d,slot.id))return reportSignupError('Deze dienst is al bezet. Kies een andere dienst.');
+   if(mine().some(e=>e.day===d&&e.slot===slot.id&&e.kind===kind))return reportSignupError('Je bent al ingeschreven voor deze dienst.');
+   if(special(d)&&!confirm('Afwijkende openingstijden nog niet bevestigd. Toch als demo vastleggen?'))return;
+   state.entries.push({id:String(Date.now())+Math.random().toString(36).slice(2),company:company().id,branch:branch(),day:d,slot:slot.id,kind,worker,time:slot.time,hours:slot.hours});
+   state.day=d;coordinatorSelectedDay=d;state.tab='month';persist();feedback('Inschrijving vastgelegd voor '+dayLabel(d)+' bij '+branch()+'.');
+ };
+}
+}
+
+function showLogin(){
+ $('appShell').classList.add('hidden');
+ $('loginScreen').classList.remove('hidden');feedback('Je bent uitgelogd.');
+}
+function doDemoLogin(){
+ const role=$('loginRole').value;
+ $('role').value=role;
+ // Een deelnemer wordt bij inloggen altijd naar de vrijgegeven maand geleid.
+ if(role==='participant'&&activeMonth!==participantPlanningMonth())switchMonth(participantPlanningMonth());
+ loggedInCompany=$('loginCompany').value;
+ if(role==='participant'&&!companies.some(c=>c.id===loggedInCompany)){
+   feedback('Dit bedrijf is niet geregistreerd voor de vrijgegeven roostermaand.',false);
+   return;
+ }
+ if(role==='participant'){
+   $('company').innerHTML=options([['ALL','Alle deelnemers'],[loggedInCompany,`${loggedInCompany} – ${companies.find(c=>c.id===loggedInCompany).name}`]],loggedInCompany);
+ }else{
+   $('company').innerHTML=options([['ALL','Alle deelnemers'],...companies.map(c=>[c.id,`${c.id} – ${c.name}`])],'ALL');
+ }
+ $('company').value=role==='coordinator'?'ALL':loggedInCompany;
+ setBranchOptions();
+ state.tab='month';coordinatorSelectedDay=null;
+ $('loginScreen').classList.add('hidden');
+ $('appShell').classList.remove('hidden');
+ render();feedback('Ingelogd als '+(role==='coordinator'?'coördinator':'deelnemer')+'.');
+}
+$('loginCompany').innerHTML=options(companies.map(c=>[c.id,`${c.id} – ${c.name}`]),'746');
+$('loginRole').onchange=()=>{$('loginCompanyRow').classList.toggle('hidden',$('loginRole').value==='coordinator')};
+$('loginSubmit').onclick=doDemoLogin;
+$('logout').onclick=showLogin;
+$('company').innerHTML=options([['ALL','Alle deelnemers'],...companies.map(c=>[c.id,`${c.id} – ${c.name}`])],'ALL');
+setBranchOptions();state.tab='month';
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(b.dataset.tab==='manage'&&state.tab!=='manage')manageSection=monthMode()==='voorbereiding'?'overview':'compliance';state.tab=b.dataset.tab;if(state.tab!=='month')coordinatorSelectedDay=null;render();feedback('Onderdeel '+b.textContent.trim()+' geopend.')});
+$('company').onchange=()=>{if(!coordinator()&&!['ALL',loggedInCompany].includes($('company').value))$('company').value=loggedInCompany;setBranchOptions();state.tab='month';coordinatorSelectedDay=null;render();feedback('Dagdetails gesloten.');};
+// Rol wordt uitsluitend bij aanmelden gekozen; na inloggen niet te wijzigen.
+$('branch').onchange=()=>{render();feedback('Filiaal '+branch()+' geselecteerd.')};
+render();
+</script></body></html>
